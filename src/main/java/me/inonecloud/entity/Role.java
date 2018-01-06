@@ -6,8 +6,8 @@ import java.util.Set;
 /**
  * JavaBean object that represents role of {@link User}
  *
- * @Author Andrew Yelmanov
- * @Date 06.01.2018
+ * @author Andrew Yelmanov
+ * created 06.01.2018
  */
 
 @Entity
