@@ -1,4 +1,4 @@
-package me.inonecloud.entity;
+package me.inonecloud.domen;
 
 
 import javax.persistence.*;
@@ -34,7 +34,7 @@ public class User {
     @ManyToMany
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> role;
+    private Set<Authority> authority;
 
     public long getId() {
         return id;
@@ -76,11 +76,11 @@ public class User {
         this.email = email;
     }
 
-    public Set<Role> getRole() {
-        return role;
+    public Set<Authority> getAuthority() {
+        return authority;
     }
 
-    public void setRole(Set<Role> role) {
-        this.role = role;
+    public void setAuthority(Set<Authority> authority) {
+        this.authority = authority;
     }
 }

@@ -1,4 +1,4 @@
-package me.inonecloud.entity;
+package me.inonecloud.domen;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name ="roles")
-public class Role {
+public class Authority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
