@@ -1,50 +1,56 @@
 package me.inonecloud.domen;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * JavaBean object that represents role of {@link User}
+ * JavaBean object that represents Autority (role) entity of {@link User} entity
  *
  * @author Andrew Yelmanov
  * created 06.01.2018
  */
 
 @Entity
-@Table(name ="roles")
-public class Authority {
+@Table(name ="authorities")
+public class Authority implements Serializable {
 
+    @NotNull
+    @Size(max = 64)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "role")
-    private String role;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(length = 64)
+    private String name;
 
     public String getName() {
-        return role;
+        return name;
     }
 
     public void setName(String name) {
-        this.role = name;
+        this.name = name;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Authority authority = (Authority) o;
+        return Objects.equals(name, authority.name);
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Authority{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }

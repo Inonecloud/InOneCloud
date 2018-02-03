@@ -2,6 +2,7 @@ package me.inonecloud.domen;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
@@ -19,7 +20,7 @@ import java.util.Set;
  */
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -27,41 +28,44 @@ public class User {
     private Long id;
 
     @NotNull
-    @Size(min = 1, max = 64)
-    @Column(name = "username")
+    @Size(min = 1, max = 100)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
     @JsonIgnore
     @NotNull
-    @Size()
-    @Column()
-    private String passvord;
+    @Size(min = 64,max = 64)
+    @Column(name = "password_hash", length = 64)
+    private String password;
 
-    @Size(max = 64)
-    @Column(name = "")
+    @Size(max = 100)
+    @Column(name = "first_name")
     private String firstName;
 
-    @Size(max =64)
-    @Column(name = "")
+    @Size(max = 100)
+    @Column(name = "last_name")
     private String lastName;
 
     @Email
     @Size(min = 5, max = 100)
-    @Column()
+    @Column(name = "email",length = 100, unique = true)
     private String email;
 
     @NotNull
-    @Column()
-    private  Boolean activate;
+    @Column(name = "activation", nullable = false)
+    private  Boolean activate = false;
 
     @NotNull
-    @Size(min = 2, max = 3)
-    @Column()
+    @Size(min = 2, max = 6)
+    @Column(name = "lang_key", length = 6)
     private String langKey;
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable()
+    @JoinTable(name = "user_authority",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
+    @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
     public Long getId() {
@@ -80,12 +84,12 @@ public class User {
         this.username = username;
     }
 
-    public String getPassvord() {
-        return passvord;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPassvord(String passvord) {
-        this.passvord = passvord;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {
