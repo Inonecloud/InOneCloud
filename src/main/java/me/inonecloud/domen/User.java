@@ -1,11 +1,18 @@
 package me.inonecloud.domen;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.Email;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
- * JavaBean object that represents a User
+ * JavaBean object that represents a User entity
  *
  * @author Andrew Yelmanov
  * created 06.01.2018
@@ -16,31 +23,52 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Size(min = 1, max = 64)
     @Column(name = "username")
     private String username;
 
-    @Column(name = "password")
-    private String password;
+    @JsonIgnore
+    @NotNull
+    @Size()
+    @Column()
+    private String passvord;
 
-    @Transient
-    transient private String confirmPassword;
+    @Size(max = 64)
+    @Column(name = "")
+    private String firstName;
 
-    @Column(name = "email")
+    @Size(max =64)
+    @Column(name = "")
+    private String lastName;
+
+    @Email
+    @Size(min = 5, max = 100)
+    @Column()
     private String email;
 
-    @ManyToMany
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Authority> authority;
+    @NotNull
+    @Column()
+    private  Boolean activate;
 
-    public long getId() {
+    @NotNull
+    @Size(min = 2, max = 3)
+    @Column()
+    private String langKey;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable()
+    private Set<Authority> authorities = new HashSet<>();
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -52,20 +80,28 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPassvord() {
+        return passvord;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassvord(String passvord) {
+        this.passvord = passvord;
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -76,11 +112,54 @@ public class User {
         this.email = email;
     }
 
-    public Set<Authority> getAuthority() {
-        return authority;
+    public Boolean getActivate() {
+        return activate;
     }
 
-    public void setAuthority(Set<Authority> authority) {
-        this.authority = authority;
+    public void setActivate(Boolean activate) {
+        this.activate = activate;
+    }
+
+    public String getLangKey() {
+        return langKey;
+    }
+
+    public void setLangKey(String langKey) {
+        this.langKey = langKey;
+    }
+
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", activate=" + activate +
+                ", langKey='" + langKey + '\'' +
+                '}';
     }
 }
