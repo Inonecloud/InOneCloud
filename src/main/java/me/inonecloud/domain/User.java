@@ -1,4 +1,4 @@
-package me.inonecloud.domen;
+package me.inonecloud.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

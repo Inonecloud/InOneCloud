@@ -1,7 +1,7 @@
 package me.inonecloud.service;
 
 /**
- * Service class for {@link me.inonecloud.domen.User}
+ * Service class for {@link me.inonecloud.domain.User}
  *
  * @author Andrew Yelmanov
  * created 06.01.2018
