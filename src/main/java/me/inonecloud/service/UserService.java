@@ -2,6 +2,7 @@ package me.inonecloud.service;
 
 import me.inonecloud.repository.AuthorityRepository;
 import me.inonecloud.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,19 +18,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /*@Bean
-    public PasswordEncoder getPasswordEncoder(){
-        return new BCryptPasswordEncoder();
-    }*/
-
-  //  private final PasswordEncoder passwordEncoder;
-
+    private final PasswordEncoder passwordEncoder;
 
     private final AuthorityRepository authorityRepository;
 
-    public UserService(UserRepository userRepository, AuthorityRepository authorityRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
         this.userRepository = userRepository;
-
+        this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
     }
 }
