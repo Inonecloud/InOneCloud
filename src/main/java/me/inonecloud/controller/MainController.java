@@ -19,4 +19,9 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/dashboard")
+    public String dashboard(){
+        return "dashboard";
+    }
+
 }
