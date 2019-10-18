@@ -6,39 +6,12 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link rel="icon" type="image/ico" href="/img/favicon.ico">
     <title>InOneCloud</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 </head>
 <body>
-<!--Top Menu-->
-<header id="logo">
-    <h1>InOneCloud</h1>
-    <nav>
-        <ul class="topmenu">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/registration">Sign Up</a></li>
-        </ul>
-    </nav>
-</header>
-<!--End Top Menu-->
 
-<!--Cover and Registration-->
-<section id="banner">
-    <div id="cover">
-        <header>
-            <h2 id="hello">Welcome to InOneCloud, {{message}}</h2>
-        </header>
-        <form id="auth" method="post" action="/login/find_user">
-            <fieldset id="inputs">
-                <input class ="username" name="username" type="text" placeholder="Username" autofocus required>
-                <input class="password" name="password" type="password" placeholder="Password" required>
-            </fieldset>
-            <fieldset id="actions">
-                <input class="submit" type ="submit" name="logIN" value = "Log in">
-            </fieldset>
-        </form>
-    </div>
-</section>
+<div id="app"></div>
+
 <!--End Cover and Registration-->
 
 <!-- Main-->
@@ -62,27 +35,7 @@
 </section>
 <!--End CTA-->
 
-<!--Footer-->
-<footer id="footer">
-    <ul class="copyright">
-        <li>Andrew Yelmanov</li>
-        <li>&copy; 2015</li>
-    </ul>
-    <nav class="buttonmenu">
-        <ul class="repeatemenu">
-            <li><a href="">Home</a></li>
-            <li><a href="">About</a></li>
-            <li><a href="">Registration</a></li>
-        </ul>
-        <ul class="storages">
-            <li><a href="https://drive.google.com">Google Drive</a></li>
-            <li><a href="https://disk.yandex.ru">Yandex Disk</a></li>
-        </ul>
-    </nav>
-    <div class="tu-ilmenau"></div>
-</footer>
-<!--End Footer-->
 
-<script src="js/main.js"></script>
+<script src="http://localhost:9000/main.js"></script>
 </body>
 </html>
