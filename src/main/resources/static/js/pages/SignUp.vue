@@ -1,24 +1,24 @@
 <template>
     <div>
-        <app-header/>
-        <app-footer/>
 
-        <router-view></router-view>
+        <app-sign-up/>
+
+
     </div>
 </template>
 
 <script>
     import AppHeader from 'components/AppHeader.vue'
+    import AppSignUp from 'components/AppSignUp.vue'
     import AppFooter from 'components/AppFooter.vue'
 
     export default {
+        name: "SignUp",
         components: {
+            AppSignUp,
             AppHeader,
             AppFooter
         },
-        data: {
-            message: 'Andrew'
-        }
     }
 </script>
 

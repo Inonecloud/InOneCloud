@@ -5,8 +5,8 @@
         <nav>
             <ul class="topmenu">
                 <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/registration">Sign Up</a></li>
+                <li><router-link to="/about">About</router-link></li>
+                <li><router-link to="/signup">Sign Up</router-link></li>
             </ul>
         </nav>
     </header>
