@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>inonecloud</name>
-    <description>Cloud storages agregator</description>
+    <description>Cloud storage aggregator</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -61,6 +61,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
         </dependency>
     </dependencies>
 

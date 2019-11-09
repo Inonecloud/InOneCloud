@@ -8,15 +8,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class DomainUserDetaislService implements UserDetailsService {
+public class DomainUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepo;
 
     @Autowired
-    public DomainUserDetaislService(UserRepository userRepo) {
+    public DomainUserDetailsService(UserRepository userRepo) {
         this.userRepo = userRepo;
     }
 
@@ -24,9 +22,8 @@ public class DomainUserDetaislService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String lowerCaseUsername = username.toLowerCase();
-        Optional<User> user = userRepo.findByUsername(lowerCaseUsername);
+        User user = userRepo.findByUsername(lowerCaseUsername);
 
-        return user.map(user1 -> new SecurityUserDetails(user1))
-                .orElseThrow(() -> new UsernameNotFoundException("User with " + username + " username not found"));
+        return new SecurityUserDetails(user);
     }
 }

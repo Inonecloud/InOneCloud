@@ -30,10 +30,10 @@ public class User {
     @Column(name = "activation")
     private Boolean activation;
 
-    @ManyToMany
-    @JoinTable( name = "user_authority",
-    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_authority",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
     private Set<Authority> authorities;
 
     public User() {
