@@ -5,34 +5,46 @@
             <header>
                 <h2 id="hello">Welcome to InOneCloud</h2>
             </header>
-            <form id="auth" method="post" action="/login/find_user">
+            <!--            <form id="auth" method="post" action="">-->
+            <form id="auth">
                 <fieldset id="inputs">
-                    <input class="username" name="username" type="text" v-model="username" placeholder="Username"
-                           autofocus required>
-                    <input class="password" name="password" type="password" placeholder="Password" required>
+                    <input class="username" name="username" type="text" placeholder="Username"
+                           v-model="username" autofocus required>
+                    <input class="password" name="password" type="password" placeholder="Password" v-model="password"
+                           required>
                 </fieldset>
                 <fieldset id="actions">
-                    <input class="submit" type="submit" name="logIN" value="Log in">
+                    <input class="button" type="button" name="logIN" value="Log in" @click="signIn">
                 </fieldset>
             </form>
+            <!--            </form>-->
         </div>
     </section>
 </template>
 
 <script>
+import axios from 'axios';
+
     export default {
         name: "Auth",
-        data: function() {
+        data: function () {
             return {
-            username: ''
+                username: '',
+                password: ''
+            }
+        },
+        methods: {
+            signIn() {
+                if (this.username !== '' && this.password !== '')
+                    axios.post('http://localhost:8080/api/auth', {
+                        username: this.username,
+                        password: this.password
+                    }).then(function (response) {
+                        console.log(response)
+                    })
+
+            }
         }
-    },
-    methods:{
-        output()
-        {
-            console.log("hello!")
-        }
-    }
     }
 </script>
 

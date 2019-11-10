@@ -285,7 +285,7 @@ table {
     margin: 0 auto;
     max-width: 100%;
     width: 25em; }
-  #banner input[type="submit"],
+  #banner input[type="button"],
   #banner .button {
     min-width: 15em;
     box-shadow: none;

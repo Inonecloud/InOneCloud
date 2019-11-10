@@ -16,8 +16,10 @@
             AppHeader,
             AppFooter
         },
-        data: {
-            message: 'Andrew'
+        data:function () {
+            return {
+                message: 'Andrew'
+            }
         }
     }
 </script>
