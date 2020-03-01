@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @EnableSwagger2
-
 @Configuration
 public class SwaggerConfig {
 
@@ -52,11 +51,11 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo(){
         return new ApiInfo(
-                "REST API of application for Interview and online University",
-                "Hello there! We wrote a new service for our company. Have a fun!",
+                "REST API of application for InOneCloud",
+                "This is a REST API of InOneCloud. Have a fun!",
                 "API v1.0",
                 "Terms of service",
-                new Contact("Andrew Yelmanov", "no website", "aelmanov@phoenixit.ru"),
+                new Contact("Andrew Yelmanov", "no website", "andrew@elmanov.ru"),
                 "License of API", "API license URL", Collections.emptyList());
     }
 }
