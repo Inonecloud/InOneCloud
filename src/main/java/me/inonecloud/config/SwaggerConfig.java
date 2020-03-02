@@ -8,6 +8,8 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.ApiKeyVehicle;
+import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Arrays;
@@ -26,11 +28,15 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .securityContexts(Arrays.asList(securityContext()))
-                .securitySchemes(Collections.singletonList(securityScheme()));
+                .securitySchemes(Collections.singletonList(apiKey()));
     }
 
-    private SecurityScheme securityScheme(){
-        return new BasicAuth("basic_auth");
+//    private SecurityScheme securityScheme(){
+//        return new BasicAuth("basic_auth");
+//    }
+
+    private ApiKey apiKey(){
+        return new ApiKey("AUTHORIZATION", "api_key", "header");
     }
 
     private SecurityContext securityContext(){
@@ -42,12 +48,11 @@ public class SwaggerConfig {
                 .build();
     }
 
-//    @Bean
-//    SecurityConfiguration security(){
-//        return SecurityConfigurationBuilder.builder()
-//                .useBasicAuthenticationWithAccessCodeGrant(true)
-//                .build();
-//    }
+    @Bean
+    SecurityConfiguration security(){
+        return new SecurityConfiguration(null, null, null, null, "Bearer access_token",
+                ApiKeyVehicle.HEADER, "Authorization", ",");
+    }
 
     private ApiInfo apiInfo(){
         return new ApiInfo(

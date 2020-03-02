@@ -28,11 +28,11 @@ public class YandexAuthService implements CloudsAuthService {
 
 
     @Override
-    public void getOAuthToken(String code) {
+    public void getOAuthToken(String code, String name) {
         ResponseEntity<YandexAccessToken> response = yandexDiskIntegrationAPI.getToken(code);
         if (response.getStatusCode() == HttpStatus.OK && response.getBody().getError() == null) {
             TokenEntity yandexToken = tokenMapper.toEntity(response.getBody());
-            yandexToken.setUser(new User()); //FixMe set real user
+            yandexToken.setUser(userRepository.findByUsername(name)); //FixMe set real user
             tokensRepository.save(yandexToken);
         }
     }
@@ -51,9 +51,9 @@ public class YandexAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void getCode(Integer code) {
+    public void getCode(String  code, String name) {
         if (code != null) {
-            getOAuthToken(code.toString());
+            getOAuthToken(code, name);
         }
     }
 
