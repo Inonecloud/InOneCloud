@@ -1,5 +1,6 @@
 package me.inonecloud.clouds;
 
+import me.inonecloud.clouds.dto.YandexAboutDisk;
 import me.inonecloud.clouds.dto.YandexAccessToken;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,7 +37,7 @@ public class YandexDiskIntegrationAPI {
         return restTemplate.postForEntity(resourceUrl, request, YandexAccessToken.class);
     }
 
-    public ResponseEntity<YandexAccessToken> refreshToken(String refreshToken){
+    public ResponseEntity<YandexAccessToken> refreshToken(String refreshToken) {
         restTemplate = new RestTemplate();
         String resourceUrl = "https://oauth.yandex.ru/token";
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -47,5 +48,14 @@ public class YandexDiskIntegrationAPI {
         formData.add("refresh_token", refreshToken);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, httpHeaders);
         return restTemplate.postForEntity(resourceUrl, request, YandexAccessToken.class);
+    }
+
+    private ResponseEntity<YandexAboutDisk> getStorageSpace(String token) {
+        restTemplate = new RestTemplate();
+        String resourceUrl = "https://cloud-api.yandex.net/v1/disk/";
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth("OAuth " + token);
+//        ResponseEntity<String> s = restTemplate.
+        return null;
     }
 }
