@@ -25,7 +25,6 @@ public class CloudsCodeController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)){
             cloudsAuthService.getCode(code, authentication.getName());
-
         }
     }
 }

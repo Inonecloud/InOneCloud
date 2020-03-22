@@ -2,27 +2,23 @@ package me.inonecloud.clouds;
 
 import me.inonecloud.clouds.dto.YandexAboutDisk;
 import me.inonecloud.clouds.dto.YandexAccessToken;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import me.inonecloud.repository.YandexRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
+
 @Component
-public class YandexDiskIntegrationAPI {
-
-    private static final String CLIENT_ID = "de30ad4f454c4e05abd736bd871a3051";
-    private static final String CLIENT_SECRET = "da34ba2d50c146f48cbbda813921ef1f";
+public class YandexDiskIntegrationAPI implements YandexRepository {
+    @Value("${yandex.client.id}")
+    private String CLIENT_ID;
+    @Value("${yandex.client.secret}")
+    private String CLIENT_SECRET;
     private RestTemplate restTemplate;
-
-    public void getUserInfo() {
-        RestTemplate restTemplate = new RestTemplate();
-        String resourceUrl = "https://cloud-api.yandex.net/v1/disk/";
-        ResponseEntity<String> response = restTemplate.getForEntity(resourceUrl, String.class);
-    }
 
     public ResponseEntity<YandexAccessToken> getToken(String code) {
         restTemplate = new RestTemplate();
@@ -50,12 +46,14 @@ public class YandexDiskIntegrationAPI {
         return restTemplate.postForEntity(resourceUrl, request, YandexAccessToken.class);
     }
 
-    private ResponseEntity<YandexAboutDisk> getStorageSpace(String token) {
+    public ResponseEntity<YandexAboutDisk> getStorageSpace(String token) {
         restTemplate = new RestTemplate();
         String resourceUrl = "https://cloud-api.yandex.net/v1/disk/";
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setBearerAuth("OAuth " + token);
-//        ResponseEntity<String> s = restTemplate.
-        return null;
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.set("Authorization", "OAuth " + token);
+        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+        return restTemplate.exchange(resourceUrl, HttpMethod.GET, httpEntity, YandexAboutDisk.class);
     }
 }
