@@ -13,6 +13,12 @@ import me.inonecloud.service.mapper.CloudInfoMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 @Service
 public class CloudsInfoService {
     private UserRepository userRepository;
@@ -33,6 +39,18 @@ public class CloudsInfoService {
 
         return cloudsInfoDto;
     }
+
+    public Boolean checkTockens(String username){
+        User user = userRepository.findByUsername(username);
+        var tokens = user.getTokens();
+        if (tokens == null || tokens.isEmpty()){
+            return false;
+        }
+        return tokens.stream()
+                .filter(Predicate.not(TokenEntity::isExpired))
+                .anyMatch(Objects::nonNull);
+    }
+
 
     private CloudInfoDto getAboutDiskInfo(String name) {
         User user = userRepository.findByUsername(name);

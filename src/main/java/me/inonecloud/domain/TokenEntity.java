@@ -1,6 +1,7 @@
 package me.inonecloud.domain;
 
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity
@@ -87,5 +88,12 @@ public class TokenEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isExpired(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.getCreatedAt());
+        calendar.add(Calendar.SECOND, this.getExpiresIn().intValue());
+        return calendar.getTime().before(new Date());
     }
 }
