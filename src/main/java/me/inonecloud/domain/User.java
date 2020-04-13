@@ -1,6 +1,7 @@
 package me.inonecloud.domain;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,7 +31,10 @@ public class User {
     @Column(name = "activation")
     private Boolean activation;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<TokenEntity> tokens;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
@@ -39,13 +43,14 @@ public class User {
     public User() {
     }
 
-    public User(String username, String passwordHash, String firstName, String lastName, String email, Boolean activation, Set<Authority> authorities) {
+    public User(String username, String passwordHash, String firstName, String lastName, String email, Boolean activation, List<TokenEntity> tokens, Set<Authority> authorities) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.activation = activation;
+        this.tokens = tokens;
         this.authorities = authorities;
     }
 
@@ -104,6 +109,14 @@ public class User {
 
     public void setActivation(Boolean activation) {
         this.activation = activation;
+    }
+
+    public List<TokenEntity> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<TokenEntity> tokens) {
+        this.tokens = tokens;
     }
 
     public Set<Authority> getAuthorities() {
