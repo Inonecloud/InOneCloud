@@ -3,28 +3,33 @@ package me.inonecloud.controller;
 import me.inonecloud.service.CloudsAuthService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
-@RequestMapping("api")
+@RequestMapping("api/auth")
 public class CloudsCodeController {
 
-    private CloudsAuthService cloudsAuthService;
+    private final CloudsAuthService yandexAuthService;
+    private final CloudsAuthService dropboxAuthService;
 
-    public CloudsCodeController(@Qualifier("yandexAuthService") CloudsAuthService cloudsAuthService) {
-        this.cloudsAuthService = cloudsAuthService;
+    public CloudsCodeController(@Qualifier("yandexAuthService") CloudsAuthService cloudsAuthService,
+                                @Qualifier("dropboxAuthService") CloudsAuthService dropboxAuthService) {
+        this.yandexAuthService = cloudsAuthService;
+        this.dropboxAuthService = dropboxAuthService;
     }
 
-    @GetMapping("/auth/yandex/{code}")
+    @GetMapping("/yandex/{code}")
     @ResponseStatus(HttpStatus.OK)
-    public void takeYandexCode(@PathVariable String code) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)){
-            cloudsAuthService.getCode(code, authentication.getName());
-        }
+    public void takeYandexCode(Principal principal, @PathVariable String code) {
+        yandexAuthService.getCode(code, principal.getName());
+    }
+
+    @GetMapping("/dropbox/{code}")
+    @ResponseStatus(HttpStatus.OK)
+    public void takeDropboxCode(Principal principal, @PathVariable String code) {
+        dropboxAuthService.getCode(code, principal.getName());
     }
 }
