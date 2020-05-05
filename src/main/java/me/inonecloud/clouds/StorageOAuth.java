@@ -1,6 +1,7 @@
 package me.inonecloud.clouds;
 
 import me.inonecloud.service.CloudsAuthService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StorageOAuth {
     private final CloudsAuthService cloudsAuthService;
 
-    public StorageOAuth(CloudsAuthService cloudsAuthService) {
+    public StorageOAuth(@Qualifier("yandexAuthService") CloudsAuthService cloudsAuthService) {
         this.cloudsAuthService = cloudsAuthService;
     }
 
