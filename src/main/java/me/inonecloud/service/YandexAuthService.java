@@ -36,14 +36,14 @@ public class YandexAuthService implements CloudsAuthService {
         ResponseEntity<YandexAccessToken> response = yandexRepository.getToken(code);
         if (response.getStatusCode() == HttpStatus.OK && response.getBody().getError() == null) {
             TokenEntity yandexToken = tokenMapper.toEntity(response.getBody());
-            yandexToken.setUser(userRepository.findByUsername(name)); //FixMe set real user
+            yandexToken.setUser(userRepository.findByUsername(name));
             tokensRepository.save(yandexToken);
         }
     }
 
     @Override
     public void refreshToken() {
-        TokenEntity oldToken = tokensRepository.findTokenEntitiesByUserAndCloudStorage(new User(), CloudStorage.YANDEX_DISK); //FixMe get real user
+        TokenEntity oldToken = tokensRepository.findTokenEntitiesByUserAndCloudStorage(new User(), CloudStorage.YANDEX_DISK);
         String refreshToken = oldToken.getRefreshToken();
         ResponseEntity<YandexAccessToken> response = yandexRepository.refreshToken(refreshToken);
         if (response.getStatusCode() == HttpStatus.OK && response.getBody().getError() == null) {
