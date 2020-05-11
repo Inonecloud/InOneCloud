@@ -91,6 +91,10 @@ public class TokenEntity {
     }
 
     public boolean isExpired(){
+        if(expiresIn == null){
+            return false;
+        }
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(this.getCreatedAt());
         calendar.add(Calendar.SECOND, this.getExpiresIn().intValue());

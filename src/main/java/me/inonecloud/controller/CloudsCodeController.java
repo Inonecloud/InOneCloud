@@ -14,11 +14,14 @@ public class CloudsCodeController {
 
     private final CloudsAuthService yandexAuthService;
     private final CloudsAuthService dropboxAuthService;
+    private final CloudsAuthService googleAuthService;
 
     public CloudsCodeController(@Qualifier("yandexAuthService") CloudsAuthService cloudsAuthService,
-                                @Qualifier("dropboxAuthService") CloudsAuthService dropboxAuthService) {
+                                @Qualifier("dropboxAuthService") CloudsAuthService dropboxAuthService,
+                                @Qualifier("googleAuthService") CloudsAuthService googleAuthService) {
         this.yandexAuthService = cloudsAuthService;
         this.dropboxAuthService = dropboxAuthService;
+        this.googleAuthService = googleAuthService;
     }
 
     @GetMapping("/yandex/{code}")
@@ -31,5 +34,12 @@ public class CloudsCodeController {
     @ResponseStatus(HttpStatus.OK)
     public void takeDropboxCode(Principal principal, @PathVariable String code) {
         dropboxAuthService.getCode(code, principal.getName());
+    }
+
+    @GetMapping("/google/{first_code}/{second_code}")
+    @ResponseStatus(HttpStatus.OK)
+    public void takeGoogleCode(Principal principal, @PathVariable("first_code") String fCode,
+                               @PathVariable("second_code") String sCode){
+        googleAuthService.getCode(fCode+"/"+sCode, principal.getName());
     }
 }

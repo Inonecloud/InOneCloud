@@ -2,6 +2,7 @@ package me.inonecloud.service.mapper;
 
 import me.inonecloud.clouds.dto.YandexAboutDisk;
 import me.inonecloud.clouds.dto.dropbox.SpaceInfo;
+import me.inonecloud.clouds.dto.google.GoogleSpaceInfo;
 import me.inonecloud.service.dto.CloudInfoDto;
 import org.springframework.stereotype.Service;
 
@@ -26,4 +27,12 @@ public class CloudInfoMapper {
         return cloudInfoDto;
     }
 
+    public CloudInfoDto googleDriveToCloudDto(GoogleSpaceInfo googleDto) {
+        CloudInfoDto cloudInfoDto = new CloudInfoDto();
+        cloudInfoDto.setTotalSpace(Long.parseLong(googleDto.getStorageQuota().getLimit()));
+        cloudInfoDto.setUsedSpace(Long.parseLong(googleDto.getStorageQuota().getUsageInDrive()));
+        cloudInfoDto.setTrashSize(Long.parseLong(googleDto.getStorageQuota().getUsageInDriveTrash()));
+        cloudInfoDto.setUsername(googleDto.getUser().getDisplayName());
+        return cloudInfoDto;
+    }
 }
