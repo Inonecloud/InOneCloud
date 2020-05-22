@@ -22,7 +22,7 @@ public class UserService {
     }
 
     public User signUp(UserDto userDto, String password) {
-        if (userRepo.findByEmail(userDto.getEmail()) != null && userRepo.findByUsername(userDto.getUsername()) != null) {
+        if (userRepo.findByEmail(userDto.getEmail()) != null || userRepo.findByUsername(userDto.getUsername()) != null) {
             throw new UserAlreadyExistException();
         }
 
