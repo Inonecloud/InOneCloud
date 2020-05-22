@@ -72,8 +72,6 @@ class UserServiceTest {
         assertThat(thrown).isNotNull();
     }
 
-
-
     private User fakeUser(UserDto userDto, String password) {
         var user = new User();
         user.setId(faker.random().nextInt(100));
