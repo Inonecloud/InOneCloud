@@ -1,6 +1,6 @@
 package me.inonecloud.service;
 
-import me.inonecloud.clouds.dto.YandexAboutDisk;
+import me.inonecloud.clouds.dto.yandex.YandexAboutDisk;
 import me.inonecloud.clouds.dto.dropbox.SpaceInfo;
 import me.inonecloud.clouds.dto.google.GoogleSpaceInfo;
 import me.inonecloud.domain.CloudStorage;

@@ -1,6 +1,6 @@
 package me.inonecloud.service.mapper;
 
-import me.inonecloud.clouds.dto.YandexAccessToken;
+import me.inonecloud.clouds.dto.yandex.YandexAccessToken;
 import me.inonecloud.domain.CloudStorage;
 import me.inonecloud.domain.TokenEntity;
 import org.springframework.stereotype.Service;

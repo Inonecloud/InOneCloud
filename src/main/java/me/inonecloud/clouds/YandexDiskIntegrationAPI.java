@@ -1,7 +1,8 @@
 package me.inonecloud.clouds;
 
-import me.inonecloud.clouds.dto.YandexAboutDisk;
-import me.inonecloud.clouds.dto.YandexAccessToken;
+import me.inonecloud.clouds.dto.yandex.YandexAboutDisk;
+import me.inonecloud.clouds.dto.yandex.YandexAccessToken;
+import me.inonecloud.clouds.dto.yandex.YandexFilesList;
 import me.inonecloud.repository.YandexRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -49,11 +50,23 @@ public class YandexDiskIntegrationAPI implements YandexRepository {
     public ResponseEntity<YandexAboutDisk> getStorageSpace(String token) {
         restTemplate = new RestTemplate();
         String resourceUrl = "https://cloud-api.yandex.net/v1/disk/";
+        HttpEntity httpEntity = new HttpEntity(addHttpHeaders(token));
+        return restTemplate.exchange(resourceUrl, HttpMethod.GET, httpEntity, YandexAboutDisk.class);
+    }
+
+    public ResponseEntity<YandexFilesList> getFiles(String token){
+        restTemplate = new RestTemplate();
+        String resourceUrl = "https://cloud-api.yandex.net/v1/disk/resources/files?" +
+                "fields=name,preview,created,modified,path,md5,type,mime_type,size" +
+                "&preview_size=XL";
+        return new RestTemplate().exchange(resourceUrl, HttpMethod.GET, new HttpEntity<>(addHttpHeaders(token)), YandexFilesList.class);
+    }
+
+    private HttpHeaders addHttpHeaders(String token){
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.set("Authorization", "OAuth " + token);
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
-        return restTemplate.exchange(resourceUrl, HttpMethod.GET, httpEntity, YandexAboutDisk.class);
+        return httpHeaders;
     }
 }

@@ -1,4 +1,4 @@
-package me.inonecloud.clouds.dto;
+package me.inonecloud.clouds.dto.yandex;
 
 
 import com.fasterxml.jackson.annotation.JsonClassDescription;

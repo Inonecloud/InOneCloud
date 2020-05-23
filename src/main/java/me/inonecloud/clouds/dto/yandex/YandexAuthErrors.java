@@ -1,4 +1,4 @@
-package me.inonecloud.clouds.dto;
+package me.inonecloud.clouds.dto.yandex;
 
 public enum YandexAuthErrors {
     AUTHORIZATION_PENDING("authorization_pending"),
