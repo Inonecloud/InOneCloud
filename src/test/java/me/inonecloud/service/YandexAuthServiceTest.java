@@ -2,7 +2,7 @@ package me.inonecloud.service;
 
 import com.github.javafaker.Faker;
 import me.inonecloud.clouds.YandexDiskIntegrationAPI;
-import me.inonecloud.clouds.dto.YandexAccessToken;
+import me.inonecloud.clouds.dto.yandex.YandexAccessToken;
 import me.inonecloud.domain.TokenEntity;
 import me.inonecloud.domain.User;
 import me.inonecloud.repository.TokensRepository;

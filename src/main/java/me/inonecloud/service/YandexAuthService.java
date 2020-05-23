@@ -1,8 +1,7 @@
 package me.inonecloud.service;
 
 import me.inonecloud.clouds.YandexDiskIntegrationAPI;
-import me.inonecloud.clouds.dto.YandexAboutDisk;
-import me.inonecloud.clouds.dto.YandexAccessToken;
+import me.inonecloud.clouds.dto.yandex.YandexAccessToken;
 import me.inonecloud.domain.CloudStorage;
 import me.inonecloud.domain.TokenEntity;
 import me.inonecloud.domain.User;
@@ -13,9 +12,6 @@ import me.inonecloud.service.mapper.TokenMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class YandexAuthService implements CloudsAuthService {
