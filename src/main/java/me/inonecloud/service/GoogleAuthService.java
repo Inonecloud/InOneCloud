@@ -27,7 +27,7 @@ public class GoogleAuthService implements CloudsAuthService {
     @Override
     public void getOAuthToken(String code, String name) {
         ResponseEntity<GoogleAccessToken> response = googleDriveRepository.getToken(code);
-        if(response.getStatusCode().is2xxSuccessful()){
+        if (response.getStatusCode().is2xxSuccessful()) {
             GoogleAccessToken body = response.getBody();
             TokenEntity tokenEntity = new TokenEntity();
             tokenEntity.setAccessToken(body.getAccessToken());
@@ -47,6 +47,8 @@ public class GoogleAuthService implements CloudsAuthService {
 
     @Override
     public void getCode(String code, String name) {
-        this.getOAuthToken(code, name);
+        if (code != null) {
+            this.getOAuthToken(code, name);
+        }
     }
 }
