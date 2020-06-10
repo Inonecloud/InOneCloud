@@ -101,7 +101,7 @@ public class CloudsInfoService {
         return tokenEntities.stream()
                 .filter(tokenEntity -> tokenEntity.getCloudStorage().equals(cloudStorage))
                 .findFirst()
-                .map(tokenEntity -> tokenEntity.getAccessToken())
+                .map(TokenEntity::getAccessToken)
                 .orElse(null);
     }
 }
