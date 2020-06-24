@@ -2,35 +2,42 @@ package me.inonecloud.clouds.dto.dropbox;
 
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 
 import java.util.List;
 
 @JsonClassDescription("The file and (direct) subfolder in the folder.")
 public class Entries {
     @JsonProperty(".tag")
+    @JsonPropertyDescription("Type of entry")
     private String tag;
 
     @JsonProperty("name")
+    @JsonPropertyDescription("Name of entity")
     private String name;
 
     @JsonProperty("id")
+    @JsonPropertyDescription("Entities' id")
     private String id;
 
     @JsonProperty("client_modified")
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MMM-ddThh:mm:ssZ")
+    @JsonPropertyDescription("The last time the file was modified on Dropbox")
     private String clientModified;
 
     @JsonProperty("server_modified")
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MMM-ddThh:mm:ssZ")
+    @JsonPropertyDescription("Date of file modification by server")
     private String serverModified;
 
     @JsonProperty("rev")
+    @JsonPropertyDescription("A unique identifier for the current revision of a file")
     private String rev;
 
     @JsonProperty("size")
+    @JsonPropertyDescription("The file size in bytes")
     private String size;
 
     @JsonProperty("path_lower")
+    @JsonPropertyDescription("The lowercased full path in the user's Dropbox")
     private String pathLower;
 
     @JsonProperty("path_display")
@@ -40,15 +47,18 @@ public class Entries {
     private SharingInfo sharingInfo;
 
     @JsonProperty("ia_downloadable")
+    @JsonPropertyDescription("Sign of file downloadable")
     private Boolean isDownloadable;
 
     @JsonProperty("property_groups")
     private List<PropertyGroups> propertyGroups;
 
     @JsonProperty("has_explicit_shared_member")
+    @JsonPropertyDescription("This flag will only be present if include_has_explicit_shared_members is true in list_folder or get_metadata")
     private Boolean hasExplicitSharedMember;
 
     @JsonProperty("file_lock_info")
+    @JsonPropertyDescription("If present, the metadata associated with the file's current lock")
     private FileLockInfo fileLockInfo;
 
     public String getTag() {

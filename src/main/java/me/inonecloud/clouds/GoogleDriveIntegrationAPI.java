@@ -1,5 +1,6 @@
 package me.inonecloud.clouds;
 
+import me.inonecloud.clouds.dto.google.GetFilesGoogleDrive;
 import me.inonecloud.clouds.dto.google.GoogleAccessToken;
 import me.inonecloud.clouds.dto.google.GoogleSpaceInfo;
 import me.inonecloud.repository.GoogleDriveRepository;
@@ -62,12 +63,21 @@ public class GoogleDriveIntegrationAPI implements GoogleDriveRepository {
 
     @Override
     public ResponseEntity<GoogleSpaceInfo> getStorageSpace(String token) {
-        URI resourceURI = URI.create(baseURI+ "about?fields=storageQuota,user&key=" + CLIENT_ID);
+        URI resourceURI = URI.create(baseURI + "about?fields=storageQuota,user&key=" + CLIENT_ID);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         httpHeaders.setBearerAuth(token);
         HttpEntity httpEntity = new HttpEntity(httpHeaders);
         return restTemplate.exchange(resourceURI, HttpMethod.GET, httpEntity, GoogleSpaceInfo.class);
+    }
+
+    public ResponseEntity<GetFilesGoogleDrive> getFiles(String token) {
+        URI resourceURI = URI.create(baseURI + "files?spaces=drive&fields=kind,nextPageToken,files,incompleteSearch&key=" + CLIENT_ID);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.setBearerAuth(token);
+        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+        return restTemplate.exchange(resourceURI, HttpMethod.GET, httpEntity, GetFilesGoogleDrive.class);
     }
 
     //https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/drive&access_type=offline&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=http%3A//localhost:3000/google/auth&client_id=135842521742-l0793cjhtc3k2sh5gng2q34r3i8iv13h.apps.googleusercontent.com
