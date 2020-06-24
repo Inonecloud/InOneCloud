@@ -13,7 +13,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("api/clouds")
 public class CloudsController {
-    private CloudsInfoService cloudsInfoService;
+    private final CloudsInfoService cloudsInfoService;
 
     public CloudsController(CloudsInfoService cloudsInfoService) {
         this.cloudsInfoService = cloudsInfoService;
