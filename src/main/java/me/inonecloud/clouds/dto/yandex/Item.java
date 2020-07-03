@@ -38,6 +38,10 @@ public class Item {
     @JsonPropertyDescription("Size of file in bytes")
     private Long size;
 
+    @JsonProperty(value = "type")
+    @JsonPropertyDescription("Type of resource. Dir - folder, file - file")
+    private String type;
+
     public String getName() {
         return name;
     }
@@ -100,5 +104,13 @@ public class Item {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
