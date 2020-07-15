@@ -8,7 +8,7 @@ import me.inonecloud.domain.User;
 import me.inonecloud.repository.TokensRepository;
 import me.inonecloud.repository.UserRepository;
 import me.inonecloud.repository.YandexRepository;
-import me.inonecloud.service.mapper.TokenMapper;
+import me.inonecloud.service.mapper.YandexTokenMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,9 +18,9 @@ public class YandexAuthService implements CloudsAuthService {
     private final YandexRepository yandexRepository;
     private final TokensRepository tokensRepository;
     private final UserRepository userRepository;
-    private final TokenMapper tokenMapper;
+    private final YandexTokenMapper tokenMapper;
 
-    public YandexAuthService(YandexDiskIntegrationAPI yandexRepository, TokensRepository tokensRepository, UserRepository userRepository, TokenMapper tokenMapper) {
+    public YandexAuthService(YandexDiskIntegrationAPI yandexRepository, TokensRepository tokensRepository, UserRepository userRepository, YandexTokenMapper tokenMapper) {
         this.yandexRepository = yandexRepository;
         this.tokensRepository = tokensRepository;
         this.userRepository = userRepository;
@@ -38,8 +38,8 @@ public class YandexAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void refreshToken() {
-        TokenEntity oldToken = tokensRepository.findTokenEntitiesByUserAndCloudStorage(new User(), CloudStorage.YANDEX_DISK);
+    public TokenEntity refreshToken(User user) {
+        TokenEntity oldToken = tokensRepository.findTokenEntitiesByUserAndCloudStorage(user, CloudStorage.YANDEX_DISK);
         String refreshToken = oldToken.getRefreshToken();
         ResponseEntity<YandexAccessToken> response = yandexRepository.refreshToken(refreshToken);
         if (response.getStatusCode() == HttpStatus.OK && response.getBody().getError() == null) {
@@ -47,7 +47,9 @@ public class YandexAuthService implements CloudsAuthService {
             newToken.setUser(oldToken.getUser());
             newToken.setId(oldToken.getId());
             tokensRepository.save(newToken);
+            return newToken;
         }
+        return null;
     }
 
     @Override

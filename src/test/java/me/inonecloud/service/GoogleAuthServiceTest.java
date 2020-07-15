@@ -7,6 +7,7 @@ import me.inonecloud.domain.User;
 import me.inonecloud.repository.GoogleDriveRepository;
 import me.inonecloud.repository.TokensRepository;
 import me.inonecloud.repository.UserRepository;
+import me.inonecloud.service.mapper.GoogleTokenMapper;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +23,10 @@ class GoogleAuthServiceTest {
     private final GoogleDriveRepository googleDriveRepository = Mockito.mock(GoogleDriveRepository.class);
     private final TokensRepository tokensRepository = Mockito.mock(TokensRepository.class);
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private final GoogleTokenMapper tokenMapper = new GoogleTokenMapper();
     private final Faker faker= new Faker();
 
-    private final CloudsAuthService googleAuthService = new GoogleAuthService(googleDriveRepository, tokensRepository, userRepository);
+    private final CloudsAuthService googleAuthService = new GoogleAuthService(googleDriveRepository, tokensRepository, userRepository, tokenMapper);
     private GoogleAccessToken googleAccessToken;
 
     @BeforeEach

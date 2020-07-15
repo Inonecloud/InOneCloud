@@ -8,7 +8,7 @@ import me.inonecloud.domain.User;
 import me.inonecloud.repository.TokensRepository;
 import me.inonecloud.repository.UserRepository;
 import me.inonecloud.repository.YandexRepository;
-import me.inonecloud.service.mapper.TokenMapper;
+import me.inonecloud.service.mapper.YandexTokenMapper;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.FieldPredicates;
@@ -26,7 +26,7 @@ class YandexAuthServiceTest {
     private final YandexRepository yandexRepository = Mockito.mock(YandexDiskIntegrationAPI.class);
     private final TokensRepository tokensRepository = Mockito.mock(TokensRepository.class);
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
-    private final TokenMapper tokenMapper = new TokenMapper();
+    private final YandexTokenMapper tokenMapper = new YandexTokenMapper();
 
     private final YandexAuthService yandexAuthService= new YandexAuthService((YandexDiskIntegrationAPI) yandexRepository, tokensRepository,userRepository, tokenMapper);
 

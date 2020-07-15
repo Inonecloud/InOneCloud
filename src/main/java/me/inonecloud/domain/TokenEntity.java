@@ -100,4 +100,8 @@ public class TokenEntity {
         calendar.add(Calendar.SECOND, this.getExpiresIn().intValue());
         return calendar.getTime().before(new Date());
     }
+
+    public boolean containsTypeOfStorage(CloudStorage tokenType){
+        return tokenType.equals(this.cloudStorage);
+    }
 }

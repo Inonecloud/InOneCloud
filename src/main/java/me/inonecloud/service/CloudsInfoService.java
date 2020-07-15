@@ -1,8 +1,8 @@
 package me.inonecloud.service;
 
-import me.inonecloud.clouds.dto.yandex.YandexAboutDisk;
 import me.inonecloud.clouds.dto.dropbox.SpaceInfo;
 import me.inonecloud.clouds.dto.google.GoogleSpaceInfo;
+import me.inonecloud.clouds.dto.yandex.YandexAboutDisk;
 import me.inonecloud.domain.CloudStorage;
 import me.inonecloud.domain.TokenEntity;
 import me.inonecloud.domain.User;
@@ -16,35 +16,36 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import static me.inonecloud.domain.CloudStorage.*;
 
 @Service
 public class CloudsInfoService {
     private final UserRepository userRepository;
-    private final TokensRepository tokensRepository;
     private final YandexRepository yandexRepository;
     private final DropboxRepository dropboxRepository;
     private final GoogleDriveRepository googleDriveRepository;
     private final CloudInfoMapper cloudInfoMapper;
+    private final TokenControl tokenControl;
 
-    public CloudsInfoService(UserRepository userRepository, TokensRepository tokensRepository, YandexRepository yandexRepository, DropboxRepository dropboxRepository, GoogleDriveRepository googleDriveRepository, CloudInfoMapper cloudInfoMapper) {
+
+    public CloudsInfoService(UserRepository userRepository, YandexRepository yandexRepository, DropboxRepository dropboxRepository, GoogleDriveRepository googleDriveRepository, CloudInfoMapper cloudInfoMapper, TokenControl tokenControl) {
         this.userRepository = userRepository;
-        this.tokensRepository = tokensRepository;
         this.yandexRepository = yandexRepository;
         this.dropboxRepository = dropboxRepository;
         this.googleDriveRepository = googleDriveRepository;
         this.cloudInfoMapper = cloudInfoMapper;
+        this.tokenControl = tokenControl;
     }
 
     public CloudsInfoDto getCloudsInfo(String name) {
         CloudsInfoDto cloudsInfoDto = new CloudsInfoDto();
         User user = userRepository.findByUsername(name);
-        List<TokenEntity> tokens = tokensRepository.findTokenEntitiesByUser(user).stream()
-                .filter(Predicate.not(TokenEntity::isExpired))
-                .collect(Collectors.toList());
-        cloudsInfoDto.setYandexDiskInfo(getAboutDiskInfo(extractAccessToken(tokens, CloudStorage.YANDEX_DISK)));
-        cloudsInfoDto.setDropboxInfo(getAboutDropboxInfo(extractAccessToken(tokens, CloudStorage.DROPBOX)));
-        cloudsInfoDto.setGoogeDriveInfo(getAboutGoogleDriveInfo(extractAccessToken(tokens, CloudStorage.GOOGLE_DRIVE)));
+        List<TokenEntity> tokens = tokenControl.getTokens(user);
+
+        cloudsInfoDto.setYandexDiskInfo(getAboutDiskInfo(extractAccessToken(tokens, YANDEX_DISK)));
+        cloudsInfoDto.setDropboxInfo(getAboutDropboxInfo(extractAccessToken(tokens, DROPBOX)));
+        cloudsInfoDto.setGoogeDriveInfo(getAboutGoogleDriveInfo(extractAccessToken(tokens, GOOGLE_DRIVE)));
         return cloudsInfoDto;
     }
 
@@ -61,7 +62,7 @@ public class CloudsInfoService {
 
 
     private CloudInfoDto getAboutDiskInfo(String token) {
-        if (token == null){
+        if (token == null) {
             return null;
         }
 
@@ -97,11 +98,12 @@ public class CloudsInfoService {
         return new CloudInfoDto();
     }
 
-    private String extractAccessToken( List<TokenEntity> tokenEntities, CloudStorage cloudStorage){
+    private String extractAccessToken(List<TokenEntity> tokenEntities, CloudStorage cloudStorage) {
         return tokenEntities.stream()
                 .filter(tokenEntity -> tokenEntity.getCloudStorage().equals(cloudStorage))
                 .findFirst()
                 .map(TokenEntity::getAccessToken)
                 .orElse(null);
     }
+
 }
