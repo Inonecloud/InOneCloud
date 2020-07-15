@@ -3,6 +3,7 @@ package me.inonecloud.service;
 import me.inonecloud.clouds.dto.dropbox.DropboxAccessToken;
 import me.inonecloud.domain.CloudStorage;
 import me.inonecloud.domain.TokenEntity;
+import me.inonecloud.domain.User;
 import me.inonecloud.repository.DropboxRepository;
 import me.inonecloud.repository.TokensRepository;
 import me.inonecloud.repository.UserRepository;
@@ -40,14 +41,14 @@ public class DropboxAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void refreshToken() {
-
+    public TokenEntity refreshToken(User user) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void getCode(String code, String name) {
-        if (code != null){
-            this.getOAuthToken(code,name);
+        if (code != null) {
+            this.getOAuthToken(code, name);
         }
     }
 }

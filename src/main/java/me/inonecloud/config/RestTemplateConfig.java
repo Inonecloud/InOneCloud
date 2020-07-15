@@ -1,7 +1,13 @@
 package me.inonecloud.config;
 
+import me.inonecloud.domain.CloudStorage;
+import me.inonecloud.repository.*;
+import me.inonecloud.service.CloudsAuthService;
+import me.inonecloud.service.DropboxAuthService;
+import me.inonecloud.service.GoogleAuthService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -27,20 +27,22 @@ public class FilesService {
     private final TokensRepository tokensRepository;
     private final UserRepository userRepository;
     private final FilesListMapper filesListMapper;
+    private final TokenControl tokenControl;
 
-    public FilesService(DropboxRepository dropboxRepository, GoogleDriveRepository googleDriveRepository, YandexRepository yandexRepository, TokensRepository tokensRepository, UserRepository userRepository, FilesListMapper filesListMapper) {
+    public FilesService(DropboxRepository dropboxRepository, GoogleDriveRepository googleDriveRepository, YandexRepository yandexRepository, TokensRepository tokensRepository, UserRepository userRepository, FilesListMapper filesListMapper, TokenControl tokenControl) {
         this.dropboxRepository = dropboxRepository;
         this.googleDriveRepository = googleDriveRepository;
         this.yandexRepository = yandexRepository;
         this.tokensRepository = tokensRepository;
         this.userRepository = userRepository;
         this.filesListMapper = filesListMapper;
+        this.tokenControl = tokenControl;
     }
 
 
     public FilesListDto getDropboxFilesList(String name) {
         User user = userRepository.findByUsername(name);
-        var tokens = getTokens(user);
+        var tokens = tokenControl.getTokens(user);
 
         String token = extractToken(tokens, CloudStorage.DROPBOX);
 
@@ -63,7 +65,7 @@ public class FilesService {
 
     public FilesListDto getYandexFilesList(String name) {
         User user = userRepository.findByUsername(name);
-        var tokens = getTokens(user);
+        var tokens = tokenControl.getTokens(user);
 
         String token = extractToken(tokens, CloudStorage.YANDEX_DISK);
 
@@ -78,7 +80,7 @@ public class FilesService {
 
     public FilesListDto getGoogleFilesList(String name) {
         User user = userRepository.findByUsername(name);
-        var tokens = getTokens(user);
+        var tokens = tokenControl.getTokens(user);
 
         String token = extractToken(tokens, CloudStorage.GOOGLE_DRIVE);
 
@@ -106,9 +108,5 @@ public class FilesService {
                 .orElse(null);
     }
 
-    private List<TokenEntity> getTokens(User user) {
-        return tokensRepository.findTokenEntitiesByUser(user).stream()
-                .filter(Predicate.not(TokenEntity::isExpired))
-                .collect(Collectors.toList());
-    }
+
 }

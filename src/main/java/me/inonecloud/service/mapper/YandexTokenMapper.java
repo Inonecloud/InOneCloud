@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class TokenMapper implements EntityMapper<YandexAccessToken, TokenEntity> {
+public class YandexTokenMapper implements EntityMapper<YandexAccessToken, TokenEntity> {
     @Override
     public TokenEntity toEntity(YandexAccessToken dto) {
         TokenEntity token = new TokenEntity();
