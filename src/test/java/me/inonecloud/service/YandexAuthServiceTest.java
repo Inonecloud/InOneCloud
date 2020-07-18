@@ -52,7 +52,7 @@ class YandexAuthServiceTest {
         SecurityContextHolder.setContext(securityContext);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-                .thenReturn(faker.funnyName());
+                .thenReturn(faker.funnyName().name());
     }
 
 
