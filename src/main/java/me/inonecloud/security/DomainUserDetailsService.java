@@ -1,6 +1,5 @@
 package me.inonecloud.security;
 
-import me.inonecloud.domain.User;
 import me.inonecloud.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,8 +21,8 @@ public class DomainUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String lowerCaseUsername = username.toLowerCase();
-        User user = userRepo.findByUsername(lowerCaseUsername);
-
-        return new SecurityUserDetails(user);
+        return userRepo.findByUsername(lowerCaseUsername)
+                .map(SecurityUserDetails::new)
+                .orElseThrow(()-> new UsernameNotFoundException("User with username " + username + " was not found"));
     }
 }

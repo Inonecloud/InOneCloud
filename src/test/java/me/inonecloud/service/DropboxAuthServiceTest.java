@@ -13,12 +13,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class DropboxAuthServiceTest {
+    private final Authentication authentication = Mockito.mock(Authentication.class);
+    private final SecurityContext securityContext = Mockito.mock(SecurityContext.class);
     private final DropboxRepository dropboxRepository = Mockito.mock(DropboxRepository.class);
     private final TokensRepository tokensRepository = Mockito.mock(TokensRepository.class);
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
@@ -31,15 +38,19 @@ class DropboxAuthServiceTest {
     void setUp() {
         dropboxAccessToken = new EasyRandom().nextObject(DropboxAccessToken.class);
 
-        when(userRepository.findByUsername(anyString())).thenReturn(new User());
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new User()));
         when(tokensRepository.save(any(TokenEntity.class))).thenReturn(new TokenEntity());
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .thenReturn(faker.funnyName());
     }
 
     @Test
     void getOAuthToken() {
         when(dropboxRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(dropboxAccessToken, HttpStatus.OK));
 
-        dropboxAuthService.getOAuthToken(faker.code().asin(), faker.funnyName().name());
+        dropboxAuthService.getOAuthToken(faker.code().asin());
 
         verify(dropboxRepository, times(1)).getToken(anyString());
         verify(userRepository, times(1)).findByUsername(anyString());
@@ -50,7 +61,7 @@ class DropboxAuthServiceTest {
     void getOAuthToken_BadResponse() {
         when(dropboxRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(dropboxAccessToken, HttpStatus.BAD_GATEWAY));
 
-        dropboxAuthService.getOAuthToken(faker.code().asin(), faker.funnyName().name());
+        dropboxAuthService.getOAuthToken(faker.code().asin());
 
         verify(dropboxRepository, times(1)).getToken(anyString());
         verify(userRepository, times(0)).findByUsername(anyString());
@@ -61,7 +72,7 @@ class DropboxAuthServiceTest {
     void getCode() {
         when(dropboxRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(dropboxAccessToken, HttpStatus.OK));
 
-        dropboxAuthService.getCode(faker.code().asin(), faker.funnyName().name());
+        dropboxAuthService.getCode(faker.code().asin());
 
         verify(dropboxRepository, times(1)).getToken(anyString());
         verify(userRepository, times(1)).findByUsername(anyString());
@@ -71,7 +82,7 @@ class DropboxAuthServiceTest {
     @Test
     void getCode_nullableCode() {
 
-        dropboxAuthService.getCode(null, faker.funnyName().name());
+        dropboxAuthService.getCode(null);
 
         verify(dropboxRepository, times(0)).getToken(anyString());
         verify(userRepository, times(0)).findByUsername(anyString());

@@ -14,12 +14,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class GoogleAuthServiceTest {
+    private final Authentication authentication = Mockito.mock(Authentication.class);
+    private final SecurityContext securityContext = Mockito.mock(SecurityContext.class);
     private final GoogleDriveRepository googleDriveRepository = Mockito.mock(GoogleDriveRepository.class);
     private final TokensRepository tokensRepository = Mockito.mock(TokensRepository.class);
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
@@ -33,15 +40,19 @@ class GoogleAuthServiceTest {
     void setUp() {
         googleAccessToken = new EasyRandom().nextObject(GoogleAccessToken.class);
 
-        when(userRepository.findByUsername(anyString())).thenReturn(new User());
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new User()));
         when(tokensRepository.save(any(TokenEntity.class))).thenReturn(new TokenEntity());
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .thenReturn(faker.funnyName());
     }
 
     @Test
     void getOAuthToken() {
         when(googleDriveRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(googleAccessToken, HttpStatus.OK));
 
-        googleAuthService.getOAuthToken(faker.code().asin(), faker.funnyName().name());
+        googleAuthService.getOAuthToken(faker.code().asin());
 
         verify(googleDriveRepository, times(1)).getToken(anyString());
         verify(userRepository, times(1)).findByUsername(anyString());
@@ -52,7 +63,7 @@ class GoogleAuthServiceTest {
     void getOAuthToken_BadResponse() {
         when(googleDriveRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(googleAccessToken, HttpStatus.BAD_GATEWAY));
 
-        googleAuthService.getOAuthToken(faker.code().asin(), faker.funnyName().name());
+        googleAuthService.getOAuthToken(faker.code().asin());
 
         verify(googleDriveRepository, times(1)).getToken(anyString());
         verify(userRepository, times(0)).findByUsername(anyString());
@@ -63,7 +74,7 @@ class GoogleAuthServiceTest {
     void getCode() {
         when(googleDriveRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(googleAccessToken, HttpStatus.OK));
 
-        googleAuthService.getCode(faker.code().asin(), faker.funnyName().name());
+        googleAuthService.getCode(faker.code().asin());
 
         verify(googleDriveRepository, times(1)).getToken(anyString());
         verify(userRepository, times(1)).findByUsername(anyString());
@@ -72,7 +83,7 @@ class GoogleAuthServiceTest {
 
     @Test
     void getCode_nullableCode() {
-        googleAuthService.getCode(null, faker.funnyName().name());
+        googleAuthService.getCode(null);
 
         verify(googleDriveRepository, times(0)).getToken(anyString());
         verify(userRepository, times(0)).findByUsername(anyString());

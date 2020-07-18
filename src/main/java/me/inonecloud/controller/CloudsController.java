@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.security.Principal;
-
 @CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
 @RequestMapping("api/clouds")
@@ -20,15 +18,15 @@ public class CloudsController {
     }
 
     @GetMapping("/getInfo")
-    public ResponseEntity<CloudsInfoDto> getCloudsInfo(Principal principal) {
-            CloudsInfoDto cloudsInfo = cloudsInfoService.getCloudsInfo(principal.getName());
+    public ResponseEntity<CloudsInfoDto> getCloudsInfo() {
+            CloudsInfoDto cloudsInfo = cloudsInfoService.getCloudsInfo();
             return new ResponseEntity<>(cloudsInfo, HttpStatus.OK);
     }
 
     @GetMapping("/checkTokens")
     @ResponseStatus(HttpStatus.FOUND)
-    public void checkTokens(Principal principal) {
-        Boolean exists = cloudsInfoService.checkTokens(principal.getName());
+    public void checkTokens() {
+        Boolean exists = cloudsInfoService.checkTokens();
         if (!exists) {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
         }

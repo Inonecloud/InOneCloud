@@ -17,12 +17,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class YandexAuthServiceTest {
+    private final Authentication authentication = Mockito.mock(Authentication.class);
+    private final SecurityContext securityContext = Mockito.mock(SecurityContext.class);
     private final YandexRepository yandexRepository = Mockito.mock(YandexDiskIntegrationAPI.class);
     private final TokensRepository tokensRepository = Mockito.mock(TokensRepository.class);
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
@@ -40,8 +47,12 @@ class YandexAuthServiceTest {
             .excludeField(FieldPredicates.named("error"))
         ).nextObject(YandexAccessToken.class);
 
-        when(userRepository.findByUsername(anyString())).thenReturn(new User());
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new User()));
         when(tokensRepository.save(any(TokenEntity.class))).thenReturn(new TokenEntity());
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .thenReturn(faker.funnyName());
     }
 
 
@@ -49,7 +60,7 @@ class YandexAuthServiceTest {
     void getOAuthToken() {
         when(yandexRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(yandexAccessToken, HttpStatus.OK));
 
-        yandexAuthService.getOAuthToken(faker.code().asin(), faker.funnyName().name());
+        yandexAuthService.getOAuthToken(faker.code().asin());
 
         verify(yandexRepository, times(1)).getToken(anyString());
         verify(userRepository, times(1)).findByUsername(anyString());
@@ -60,7 +71,7 @@ class YandexAuthServiceTest {
     void getOAuthToken_BadResponse() {
         when(yandexRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(yandexAccessToken, HttpStatus.BAD_GATEWAY));
 
-        yandexAuthService.getOAuthToken(faker.code().asin(), faker.funnyName().name());
+        yandexAuthService.getOAuthToken(faker.code().asin());
 
         verify(yandexRepository, times(1)).getToken(anyString());
         verify(userRepository, times(0)).findByUsername(anyString());
@@ -75,7 +86,7 @@ class YandexAuthServiceTest {
     void getCode() {
         when(yandexRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(yandexAccessToken, HttpStatus.OK));
 
-        yandexAuthService.getCode(faker.code().asin(), faker.funnyName().name());
+        yandexAuthService.getCode(faker.code().asin());
 
         verify(yandexRepository, times(1)).getToken(anyString());
         verify(userRepository, times(1)).findByUsername(anyString());
@@ -85,7 +96,7 @@ class YandexAuthServiceTest {
     @Test
     void getCode_nullableCode() {
 
-        yandexAuthService.getCode(null, faker.funnyName().name());
+        yandexAuthService.getCode(null);
 
         verify(yandexRepository, times(0)).getToken(anyString());
         verify(userRepository, times(0)).findByUsername(anyString());

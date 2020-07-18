@@ -4,6 +4,7 @@ import me.inonecloud.controller.exceptions.InvalidPasswordException;
 import me.inonecloud.controller.util.ManagedUser;
 import me.inonecloud.domain.User;
 import me.inonecloud.service.UserService;
+import me.inonecloud.service.dto.PasswordChangeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,15 @@ public class UserController {
             throw new InvalidPasswordException();
         }
         User user = userService.signUp(managedUser, managedUser.getPassword());
+    }
+
+    @PostMapping("/changePassword")
+    public void changPassword(@Valid @RequestBody PasswordChangeDto passwordChangeDto){
+        if(!passwordChecker(passwordChangeDto.getNewPassword())){
+            throw new InvalidPasswordException();
+        }
+        userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
+
     }
 
     private boolean passwordChecker(String password) {

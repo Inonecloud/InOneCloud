@@ -22,13 +22,13 @@ public class FilesController {
     @GetMapping("/{cloud}")
     public ResponseEntity<FilesListDto> getFiles(Principal principal, @PathVariable String cloud){
         if (cloud.equals(CloudStorage.DROPBOX.name().toLowerCase())){
-            return new ResponseEntity<>(filesService.getDropboxFilesList(principal.getName()), HttpStatus.OK);
+            return new ResponseEntity<>(filesService.getDropboxFilesList(), HttpStatus.OK);
         }
         if(cloud.equals(CloudStorage.YANDEX_DISK.name().toLowerCase())){
-            return new ResponseEntity<>(filesService.getYandexFilesList(principal.getName()), HttpStatus.OK);
+            return new ResponseEntity<>(filesService.getYandexFilesList(), HttpStatus.OK);
         }
         if(cloud.equals(CloudStorage.GOOGLE_DRIVE.name().toLowerCase())){
-            return new ResponseEntity<>(filesService.getGoogleFilesList(principal.getName()),HttpStatus.OK);
+            return new ResponseEntity<>(filesService.getGoogleFilesList(),HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

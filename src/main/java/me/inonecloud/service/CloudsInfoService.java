@@ -7,14 +7,18 @@ import me.inonecloud.domain.CloudStorage;
 import me.inonecloud.domain.TokenEntity;
 import me.inonecloud.domain.User;
 import me.inonecloud.repository.*;
+import me.inonecloud.security.SecurityUtils;
 import me.inonecloud.service.dto.CloudInfoDto;
 import me.inonecloud.service.dto.CloudsInfoDto;
 import me.inonecloud.service.mapper.CloudInfoMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import static me.inonecloud.domain.CloudStorage.*;
@@ -38,9 +42,13 @@ public class CloudsInfoService {
         this.tokenControl = tokenControl;
     }
 
-    public CloudsInfoDto getCloudsInfo(String name) {
+    public CloudsInfoDto getCloudsInfo() {
         CloudsInfoDto cloudsInfoDto = new CloudsInfoDto();
-        User user = userRepository.findByUsername(name);
+        User user = SecurityUtils.getCurrentUserLogin()
+                .flatMap(userRepository::findByUsername)
+                .orElseThrow(() -> new UsernameNotFoundException(""));
+
+
         List<TokenEntity> tokens = tokenControl.getTokens(user);
 
         cloudsInfoDto.setYandexDiskInfo(getAboutDiskInfo(extractAccessToken(tokens, YANDEX_DISK)));
@@ -49,15 +57,21 @@ public class CloudsInfoService {
         return cloudsInfoDto;
     }
 
-    public Boolean checkTokens(String username) {
-        User user = userRepository.findByUsername(username);
-        var tokens = user.getTokens();
-        if (tokens == null || tokens.isEmpty()) {
+    public Boolean checkTokens() {
+        List<TokenEntity> tokens = new ArrayList<>();
+        SecurityUtils.getCurrentUserLogin()
+                .flatMap(userRepository::findByUsername)
+                .ifPresent(user -> {
+                    tokens.addAll(user.getTokens());
+                });
+
+        if (tokens.isEmpty()) {
             return false;
         }
         return tokens.stream()
                 .filter(Predicate.not(TokenEntity::isExpired))
                 .anyMatch(Objects::nonNull);
+
     }
 
 

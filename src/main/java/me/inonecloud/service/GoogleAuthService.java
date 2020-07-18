@@ -7,6 +7,7 @@ import me.inonecloud.domain.User;
 import me.inonecloud.repository.GoogleDriveRepository;
 import me.inonecloud.repository.TokensRepository;
 import me.inonecloud.repository.UserRepository;
+import me.inonecloud.security.SecurityUtils;
 import me.inonecloud.service.mapper.GoogleTokenMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,13 @@ public class GoogleAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void getOAuthToken(String code, String name) {
+    public void getOAuthToken(String code) {
         ResponseEntity<GoogleAccessToken> response = googleDriveRepository.getToken(code);
         if (response.getStatusCode().is2xxSuccessful()) {
             TokenEntity tokenEntity = tokenMapper.toEntity(response.getBody());
-            tokenEntity.setUser(userRepository.findByUsername(name));
+            tokenEntity.setUser(SecurityUtils.getCurrentUserLogin()
+                    .flatMap(userRepository::findByUsername)
+                    .orElseThrow());
             tokensRepository.save(tokenEntity);
         }
     }
@@ -55,9 +58,9 @@ public class GoogleAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void getCode(String code, String name) {
+    public void getCode(String code) {
         if (code != null) {
-            this.getOAuthToken(code, name);
+            this.getOAuthToken(code);
         }
     }
 }

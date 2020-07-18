@@ -7,6 +7,7 @@ import me.inonecloud.domain.User;
 import me.inonecloud.repository.DropboxRepository;
 import me.inonecloud.repository.TokensRepository;
 import me.inonecloud.repository.UserRepository;
+import me.inonecloud.security.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class DropboxAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void getOAuthToken(String code, String name) {
+    public void getOAuthToken(String code) {
         ResponseEntity<DropboxAccessToken> response = dropboxRepository.getToken(code);
         if (response.getStatusCode() == HttpStatus.OK) {
             DropboxAccessToken body = response.getBody();
@@ -35,7 +36,9 @@ public class DropboxAuthService implements CloudsAuthService {
             tokenEntity.setAccessToken(body.getAccessToken());
             tokenEntity.setCloudStorage(CloudStorage.DROPBOX);
             tokenEntity.setCreatedAt(new Date());
-            tokenEntity.setUser(userRepository.findByUsername(name));
+            tokenEntity.setUser(SecurityUtils.getCurrentUserLogin()
+                    .flatMap(userRepository::findByUsername)
+                    .orElseThrow());
             tokensRepository.save(tokenEntity);
         }
     }
@@ -46,9 +49,9 @@ public class DropboxAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void getCode(String code, String name) {
+    public void getCode(String code) {
         if (code != null) {
-            this.getOAuthToken(code, name);
+            this.getOAuthToken(code);
         }
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface CloudsAuthService {
-    public void getOAuthToken(String code, String name);
+    public void getOAuthToken(String code);
     public TokenEntity refreshToken(User user);
-    public void getCode(String code, String name);
+    public void getCode(String code);
 }

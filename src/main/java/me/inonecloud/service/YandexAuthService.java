@@ -8,6 +8,7 @@ import me.inonecloud.domain.User;
 import me.inonecloud.repository.TokensRepository;
 import me.inonecloud.repository.UserRepository;
 import me.inonecloud.repository.YandexRepository;
+import me.inonecloud.security.SecurityUtils;
 import me.inonecloud.service.mapper.YandexTokenMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,13 @@ public class YandexAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void getOAuthToken(String code, String name) {
+    public void getOAuthToken(String code) {
         ResponseEntity<YandexAccessToken> response = yandexRepository.getToken(code);
         if (response.getStatusCode() == HttpStatus.OK && response.getBody().getError() == null) {
             TokenEntity yandexToken = tokenMapper.toEntity(response.getBody());
-            yandexToken.setUser(userRepository.findByUsername(name));
+            yandexToken.setUser(SecurityUtils.getCurrentUserLogin()
+                    .flatMap(userRepository::findByUsername)
+                    .orElseThrow());
             tokensRepository.save(yandexToken);
         }
     }
@@ -53,9 +56,9 @@ public class YandexAuthService implements CloudsAuthService {
     }
 
     @Override
-    public void getCode(String code, String name) {
+    public void getCode(String code) {
         if (code != null) {
-            getOAuthToken(code, name);
+            getOAuthToken(code);
         }
     }
 
