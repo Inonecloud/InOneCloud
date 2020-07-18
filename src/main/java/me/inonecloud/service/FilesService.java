@@ -10,14 +10,13 @@ import me.inonecloud.domain.CloudStorage;
 import me.inonecloud.domain.TokenEntity;
 import me.inonecloud.domain.User;
 import me.inonecloud.repository.*;
+import me.inonecloud.security.SecurityUtils;
 import me.inonecloud.service.dto.FilesListDto;
 import me.inonecloud.service.mapper.FilesListMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 public class FilesService {
@@ -40,8 +39,8 @@ public class FilesService {
     }
 
 
-    public FilesListDto getDropboxFilesList(String name) {
-        User user = userRepository.findByUsername(name);
+    public FilesListDto getDropboxFilesList() {
+        User user = getUser();
         var tokens = tokenControl.getTokens(user);
 
         String token = extractToken(tokens, CloudStorage.DROPBOX);
@@ -63,8 +62,8 @@ public class FilesService {
         return null;
     }
 
-    public FilesListDto getYandexFilesList(String name) {
-        User user = userRepository.findByUsername(name);
+    public FilesListDto getYandexFilesList() {
+        User user = getUser();
         var tokens = tokenControl.getTokens(user);
 
         String token = extractToken(tokens, CloudStorage.YANDEX_DISK);
@@ -78,8 +77,8 @@ public class FilesService {
         return null;
     }
 
-    public FilesListDto getGoogleFilesList(String name) {
-        User user = userRepository.findByUsername(name);
+    public FilesListDto getGoogleFilesList() {
+        User user = getUser();
         var tokens = tokenControl.getTokens(user);
 
         String token = extractToken(tokens, CloudStorage.GOOGLE_DRIVE);
@@ -108,5 +107,9 @@ public class FilesService {
                 .orElse(null);
     }
 
-
+    private User getUser(){
+        return SecurityUtils.getCurrentUserLogin()
+                .flatMap(userRepository::findByUsername)
+                .orElseThrow();
+    }
 }

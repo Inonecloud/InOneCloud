@@ -23,7 +23,7 @@ public class StorageOAuth {
     public void yandexAuth(@RequestParam String code) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            cloudsAuthService.getCode(code, authentication.getName());
+            cloudsAuthService.getCode(code);
         }
     }
 }

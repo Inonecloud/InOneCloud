@@ -27,19 +27,19 @@ public class CloudsCodeController {
     @GetMapping("/yandex/{code}")
     @ResponseStatus(HttpStatus.OK)
     public void takeYandexCode(Principal principal, @PathVariable String code) {
-        yandexAuthService.getCode(code, principal.getName());
+        yandexAuthService.getCode(code);
     }
 
     @GetMapping("/dropbox/{code}")
     @ResponseStatus(HttpStatus.OK)
     public void takeDropboxCode(Principal principal, @PathVariable String code) {
-        dropboxAuthService.getCode(code, principal.getName());
+        dropboxAuthService.getCode(code);
     }
 
     @GetMapping("/google/{first_code}/{second_code}")
     @ResponseStatus(HttpStatus.OK)
     public void takeGoogleCode(Principal principal, @PathVariable("first_code") String fCode,
                                @PathVariable("second_code") String sCode){
-        googleAuthService.getCode(fCode+"/"+sCode, principal.getName());
+        googleAuthService.getCode(fCode+"/"+sCode);
     }
 }

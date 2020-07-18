@@ -12,17 +12,26 @@ import org.jeasy.random.FieldPredicates;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
     private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+
+    private final Authentication authentication = Mockito.mock(Authentication.class);
+
+    private final SecurityContext securityContext = Mockito.mock(SecurityContext.class);
 
     private final UserMapper userMapper = new UserMapper();
 
@@ -42,6 +51,10 @@ class UserServiceTest {
                 .randomize(FieldPredicates.named("lastName"), () -> faker.name().lastName())
         ).nextObject(UserDto.class);
 
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .thenReturn(userDto.getUsername());
     }
 
     @Test
@@ -49,7 +62,7 @@ class UserServiceTest {
         String password = faker.internet().password();
 
         when(userRepository.findByEmail(eq(userDto.getUsername()))).thenReturn(null);
-        when(userRepository.findByUsername(eq(userDto.getUsername()))).thenReturn(null);
+        when(userRepository.findByUsername(eq(userDto.getUsername()))).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(fakeUser(userDto, password));
 
         User actual = userService.signUp(userDto, password);
@@ -70,6 +83,19 @@ class UserServiceTest {
         UserAlreadyExistException thrown = assertThrows(UserAlreadyExistException.class, () -> userService.signUp(userDto, faker.internet().password()));
 
         assertThat(thrown).isNotNull();
+    }
+
+    @Test
+    void changePassword(){
+        User fakeUser = fakeUser(userDto, "12345678");
+        when(userRepository.findByUsername(userDto.getUsername()))
+                .thenReturn(Optional.of(fakeUser));
+        when(userRepository.save(any(User.class))).thenReturn(fakeUser);
+
+        userService.changePassword("12345678", "87654321");
+
+        verify(userRepository, times(1)).findByUsername(userDto.getUsername());
+        verify(userRepository, times(1)).save(fakeUser);
     }
 
     private User fakeUser(UserDto userDto, String password) {
