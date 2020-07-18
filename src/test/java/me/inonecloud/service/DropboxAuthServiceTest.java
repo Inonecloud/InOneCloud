@@ -38,13 +38,16 @@ class DropboxAuthServiceTest {
     void setUp() {
         dropboxAccessToken = new EasyRandom().nextObject(DropboxAccessToken.class);
 
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new User()));
-        when(tokensRepository.save(any(TokenEntity.class))).thenReturn(new TokenEntity());
         SecurityContextHolder.setContext(securityContext);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-                .thenReturn(faker.funnyName());
+                .thenReturn(faker.funnyName().name());
+
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new User()));
+        when(tokensRepository.save(any(TokenEntity.class))).thenReturn(new TokenEntity());
     }
+
 
     @Test
     void getOAuthToken() {
