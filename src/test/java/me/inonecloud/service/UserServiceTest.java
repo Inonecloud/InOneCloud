@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -33,9 +34,11 @@ class UserServiceTest {
 
     private final SecurityContext securityContext = Mockito.mock(SecurityContext.class);
 
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
+
     private final UserMapper userMapper = new UserMapper();
 
-    private final UserService userService = new UserService(userRepository, userMapper);
+    private final UserService userService = new UserService(userRepository, userMapper, passwordEncoder);
 
     private final Faker faker = new Faker();
 

@@ -7,8 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
 @RequestMapping("api/clouds/files")
@@ -20,7 +18,7 @@ public class FilesController {
     }
 
     @GetMapping("/{cloud}")
-    public ResponseEntity<FilesListDto> getFiles(Principal principal, @PathVariable String cloud){
+    public ResponseEntity<FilesListDto> getFiles(@PathVariable String cloud){
         if (cloud.equals(CloudStorage.DROPBOX.name().toLowerCase())){
             return new ResponseEntity<>(filesService.getDropboxFilesList(), HttpStatus.OK);
         }

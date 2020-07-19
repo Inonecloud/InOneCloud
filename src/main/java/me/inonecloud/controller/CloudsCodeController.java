@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 @CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
 @RequestMapping("api/auth")
@@ -26,19 +24,19 @@ public class CloudsCodeController {
 
     @GetMapping("/yandex/{code}")
     @ResponseStatus(HttpStatus.OK)
-    public void takeYandexCode(Principal principal, @PathVariable String code) {
+    public void takeYandexCode(@PathVariable String code) {
         yandexAuthService.getCode(code);
     }
 
     @GetMapping("/dropbox/{code}")
     @ResponseStatus(HttpStatus.OK)
-    public void takeDropboxCode(Principal principal, @PathVariable String code) {
+    public void takeDropboxCode(@PathVariable String code) {
         dropboxAuthService.getCode(code);
     }
 
     @GetMapping("/google/{first_code}/{second_code}")
     @ResponseStatus(HttpStatus.OK)
-    public void takeGoogleCode(Principal principal, @PathVariable("first_code") String fCode,
+    public void takeGoogleCode(@PathVariable("first_code") String fCode,
                                @PathVariable("second_code") String sCode){
         googleAuthService.getCode(fCode+"/"+sCode);
     }

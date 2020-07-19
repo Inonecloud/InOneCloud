@@ -9,6 +9,7 @@ import me.inonecloud.service.dto.UserDto;
 import me.inonecloud.service.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +18,13 @@ public class UserService {
 
     private final UserRepository userRepo;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepo, UserMapper userMapper) {
+    public UserService(UserRepository userRepo, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User signUp(UserDto userDto, String password) {
@@ -30,7 +33,7 @@ public class UserService {
         }
 
         User newUser = userMapper.toEntity(userDto);
-        newUser.setPasswordHash(new BCryptPasswordEncoder().encode(password));
+        newUser.setPasswordHash(passwordEncoder.encode(password));
 
         userRepo.save(newUser);
         return newUser;
@@ -42,10 +45,10 @@ public class UserService {
                 .flatMap(userRepo::findByUsername)
                 .ifPresent(user -> {
                     String currentEncryptedPassword = user.getPasswordHash();
-                    if(!new BCryptPasswordEncoder().matches(oldPassword, currentEncryptedPassword)){
+                    if(!passwordEncoder.matches(oldPassword, currentEncryptedPassword)){
                         throw new InvalidPasswordException();
                     }
-                    user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
+                    user.setPasswordHash(passwordEncoder.encode(newPassword));
                     userRepo.save(user);
                 });
     }
