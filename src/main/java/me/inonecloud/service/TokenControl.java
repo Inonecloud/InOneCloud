@@ -15,13 +15,11 @@ import static me.inonecloud.domain.CloudStorage.*;
 
 @Component
 public class TokenControl {
-    private final DropboxAuthService dropboxAuthService;
     private final GoogleAuthService googleAuthService;
     private final YandexAuthService yandexAuthService;
     private final TokensRepository tokensRepository;
 
-    public TokenControl(DropboxAuthService dropboxAuthService, GoogleAuthService googleAuthService, YandexAuthService yandexAuthService, TokensRepository tokensRepository) {
-        this.dropboxAuthService = dropboxAuthService;
+    public TokenControl(GoogleAuthService googleAuthService, YandexAuthService yandexAuthService, TokensRepository tokensRepository) {
         this.googleAuthService = googleAuthService;
         this.yandexAuthService = yandexAuthService;
         this.tokensRepository = tokensRepository;
