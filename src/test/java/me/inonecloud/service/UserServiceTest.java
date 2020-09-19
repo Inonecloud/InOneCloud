@@ -1,6 +1,7 @@
 package me.inonecloud.service;
 
 import com.github.javafaker.Faker;
+import me.inonecloud.controller.exceptions.InvalidPasswordException;
 import me.inonecloud.controller.exceptions.UserAlreadyExistException;
 import me.inonecloud.domain.User;
 import me.inonecloud.repository.UserRepository;
@@ -9,19 +10,23 @@ import me.inonecloud.service.mapper.UserMapper;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.FieldPredicates;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -46,7 +51,7 @@ class UserServiceTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         userDto = new EasyRandom(new EasyRandomParameters()
                 .randomize(FieldPredicates.named("email"), () -> faker.internet().emailAddress())
                 .randomize(FieldPredicates.named("username"), () -> faker.cat().name())
@@ -61,6 +66,7 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("Sign up user test")
     void signUp() {
         String password = faker.internet().password();
 
@@ -70,26 +76,27 @@ class UserServiceTest {
 
         User actual = userService.signUp(userDto, password);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getPasswordHash()).isNotEmpty();
-        assertThat(actual.getUsername()).isEqualTo(userDto.getUsername());
-        assertThat(actual.getFirstName()).isEqualTo(userDto.getFirstName());
-        assertThat(actual.getLastName()).isEqualTo(userDto.getLastName());
-        assertThat(actual.getActivation()).isEqualTo(userDto.getActivation());
+        Assertions.assertAll(
+                () -> assertNotNull(actual),
+                () -> assertFalse(actual.getPasswordHash().isEmpty()),
+                () -> assertEquals(userDto.getUsername(), actual.getUsername()),
+                () -> assertEquals(userDto.getFirstName(), actual.getFirstName()),
+                () -> assertEquals(userDto.getLastName(), actual.getLastName()),
+                () -> assertEquals(userDto.getActivation(), actual.getActivation()));
     }
 
     @Test
-    void signUp_userExists(){
+    @DisplayName("User already exists sign up test")
+    void signUp_userExists() {
         when(userRepository.findByEmail(eq(userDto.getEmail()))).thenReturn(fakeUser(userDto, ""));
         when(userRepository.findByUsername(userDto.getUsername())).thenReturn(null);
 
-        UserAlreadyExistException thrown = assertThrows(UserAlreadyExistException.class, () -> userService.signUp(userDto, faker.internet().password()));
-
-        assertThat(thrown).isNotNull();
+        Assertions.assertThrows(UserAlreadyExistException.class, () -> userService.signUp(userDto, faker.internet().password()));
     }
 
     @Test
-    void changePassword(){
+    @DisplayName("Change password test")
+    void changePassword() {
         User fakeUser = fakeUser(userDto, "12345678");
         when(userRepository.findByUsername(userDto.getUsername()))
                 .thenReturn(Optional.of(fakeUser));
@@ -99,6 +106,36 @@ class UserServiceTest {
 
         verify(userRepository, times(1)).findByUsername(userDto.getUsername());
         verify(userRepository, times(1)).save(fakeUser);
+    }
+
+    @Test
+    @DisplayName("Invalid password exception password change test")
+    void changePasswordException() {
+        User fakeUser = fakeUser(userDto, "12345678");
+        when(userRepository.findByUsername(userDto.getUsername()))
+                .thenReturn(Optional.of(fakeUser));
+        when(userRepository.save(any(User.class))).thenReturn(fakeUser);
+
+        Assertions.assertThrows(InvalidPasswordException.class, () -> userService.changePassword("87654321", "12345678"));
+    }
+
+    @Test
+    @DisplayName("Get current user test")
+    void getCurrentUser() {
+        User fakeUser = fakeUser(userDto, "12345678");
+
+        when(userRepository.findByUsername(any()))
+                .thenReturn(Optional.of(fakeUser));
+        when(securityContext.getAuthentication())
+                .thenReturn(new AnonymousAuthenticationToken("key", "r", List.of(new SimpleGrantedAuthority("admin"))));
+
+        User currentUser = userService.getCurrentUser();
+
+        Assertions.assertAll(
+                () -> assertEquals(fakeUser.getId(), currentUser.getId()),
+                () -> assertEquals(fakeUser.getUsername(), currentUser.getUsername()),
+                () -> assertTrue(currentUser.getActivation()));
+
     }
 
     private User fakeUser(UserDto userDto, String password) {

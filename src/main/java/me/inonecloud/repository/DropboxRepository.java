@@ -1,6 +1,7 @@
 package me.inonecloud.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import me.inonecloud.clouds.dto.dropbox.DownloadFileDropboxRs;
 import me.inonecloud.clouds.dto.dropbox.DropboxAccessToken;
 import me.inonecloud.clouds.dto.dropbox.GetFilesDropboxRs;
 import me.inonecloud.clouds.dto.dropbox.SpaceInfo;
@@ -11,4 +12,5 @@ public interface DropboxRepository {
     public ResponseEntity<SpaceInfo> getSpaceUsage(String token);
     public ResponseEntity<GetFilesDropboxRs> getFiles(String token);
     public ResponseEntity<GetFilesDropboxRs> getFilesNext(String token, String cursor) throws JsonProcessingException;
+    public ResponseEntity<DownloadFileDropboxRs> downloadFile(String token, String path);
 }

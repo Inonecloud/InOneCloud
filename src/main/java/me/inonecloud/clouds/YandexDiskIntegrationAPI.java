@@ -2,6 +2,7 @@ package me.inonecloud.clouds;
 
 import me.inonecloud.clouds.dto.yandex.YandexAboutDisk;
 import me.inonecloud.clouds.dto.yandex.YandexAccessToken;
+import me.inonecloud.clouds.dto.yandex.YandexDownloadFile;
 import me.inonecloud.clouds.dto.yandex.YandexFilesList;
 import me.inonecloud.repository.YandexRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.yaml.snakeyaml.util.UriEncoder;
 
 import java.net.URI;
 import java.util.Collections;
@@ -53,7 +55,7 @@ public class YandexDiskIntegrationAPI implements YandexRepository {
         return restTemplate.postForEntity(resourceURI, request, YandexAccessToken.class);
     }
 
-    public ResponseEntity<YandexAboutDisk> getStorageSpace(String token) {
+    public ResponseEntity<YandexAboutDisk> getSpaceUsage(String token) {
         URI resourceURI = URI.create(baseURI + "disk/");
         HttpEntity httpEntity = new HttpEntity(addHttpHeaders(token));
         return restTemplate.exchange(resourceURI, HttpMethod.GET, httpEntity, YandexAboutDisk.class);
@@ -63,7 +65,12 @@ public class YandexDiskIntegrationAPI implements YandexRepository {
         URI resourceUrl = URI.create(baseURI + "disk/resources/files?" +
                 "fields=name,preview,created,modified,path,md5,type,mime_type,size" +
                 "&preview_size=XL");
-        return new RestTemplate().exchange(resourceUrl, HttpMethod.GET, new HttpEntity<>(addHttpHeaders(token)), YandexFilesList.class);
+        return restTemplate.exchange(resourceUrl, HttpMethod.GET, new HttpEntity<>(addHttpHeaders(token)), YandexFilesList.class);
+    }
+
+    public ResponseEntity<YandexDownloadFile> downloadFile(String token, String path) {
+        URI resourceUrl = URI.create(baseURI + "disk/resources/download?path=" + UriEncoder.encode(path));
+        return restTemplate.exchange(resourceUrl, HttpMethod.GET, new HttpEntity<>(addHttpHeaders(token)), YandexDownloadFile.class);
     }
 
     private HttpHeaders addHttpHeaders(String token) {

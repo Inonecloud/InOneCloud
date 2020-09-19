@@ -1,5 +1,6 @@
 package me.inonecloud.clouds;
 
+import me.inonecloud.clouds.dto.google.DownloadFileGoogle;
 import me.inonecloud.clouds.dto.google.GetFilesGoogleDrive;
 import me.inonecloud.clouds.dto.google.GoogleAccessToken;
 import me.inonecloud.clouds.dto.google.GoogleSpaceInfo;
@@ -67,7 +68,7 @@ public class GoogleDriveIntegrationAPI implements GoogleDriveRepository {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         httpHeaders.setBearerAuth(token);
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+        var httpEntity = new HttpEntity(httpHeaders);
         return restTemplate.exchange(resourceURI, HttpMethod.GET, httpEntity, GoogleSpaceInfo.class);
     }
 
@@ -76,9 +77,22 @@ public class GoogleDriveIntegrationAPI implements GoogleDriveRepository {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         httpHeaders.setBearerAuth(token);
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+        var httpEntity = new HttpEntity(httpHeaders);
         return restTemplate.exchange(resourceURI, HttpMethod.GET, httpEntity, GetFilesGoogleDrive.class);
     }
+
+    @Override
+    public ResponseEntity<DownloadFileGoogle> downloadFile(String token, String fileId) {
+        URI resourceURI = URI.create(baseURI + "files/" +fileId +"?fields=webContentLink%09&key=" + CLIENT_ID);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        httpHeaders.setBearerAuth(token);
+        var httpEntity = new HttpEntity(httpHeaders);
+        return restTemplate.exchange(resourceURI,HttpMethod.GET, httpEntity, DownloadFileGoogle.class);
+    }
+
+    // 'https://www.googleapis.com/drive/v3/files/1rXwoq-jSpvfbSQlLgQpPqmqg4hoGErC7Zw?fields=webContentLink%09&key=[YOUR_API_KEY]'
+
 
     //https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/drive&access_type=offline&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=http%3A//localhost:3000/google/auth&client_id=135842521742-l0793cjhtc3k2sh5gng2q34r3i8iv13h.apps.googleusercontent.com
 }

@@ -13,6 +13,8 @@ import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.FieldPredicates;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
@@ -57,6 +59,7 @@ class YandexAuthServiceTest {
 
 
     @Test
+    @DisplayName("Get OAuth Yandex Disk token test")
     void getOAuthToken() {
         when(yandexRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(yandexAccessToken, HttpStatus.OK));
 
@@ -68,6 +71,7 @@ class YandexAuthServiceTest {
     }
 
     @Test
+    @DisplayName("Get OAuth Yandex Disk token test with bad response error")
     void getOAuthToken_BadResponse() {
         when(yandexRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(yandexAccessToken, HttpStatus.BAD_GATEWAY));
 
@@ -79,10 +83,13 @@ class YandexAuthServiceTest {
     }
 
     @Test
+    @DisplayName("Refresh Yandex Disk token test")
+    @Disabled("Not implemented")
     void refreshToken() {
     }
 
     @Test
+    @DisplayName("Get Yandex Disk code for token exchange test")
     void getCode() {
         when(yandexRepository.getToken(anyString())).thenReturn(new ResponseEntity<>(yandexAccessToken, HttpStatus.OK));
 
@@ -94,6 +101,7 @@ class YandexAuthServiceTest {
     }
 
     @Test
+    @DisplayName("Get Yandex Disk code without code test")
     void getCode_nullableCode() {
 
         yandexAuthService.getCode(null);

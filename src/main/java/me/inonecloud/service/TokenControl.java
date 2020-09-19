@@ -1,5 +1,6 @@
 package me.inonecloud.service;
 
+import me.inonecloud.domain.CloudStorage;
 import me.inonecloud.domain.TokenEntity;
 import me.inonecloud.domain.User;
 import me.inonecloud.repository.TokensRepository;
@@ -23,6 +24,14 @@ public class TokenControl {
         this.googleAuthService = googleAuthService;
         this.yandexAuthService = yandexAuthService;
         this.tokensRepository = tokensRepository;
+    }
+
+    public String extractToken(User user, CloudStorage storageType) {
+        return getTokens(user).stream()
+                .filter(tokenEntity -> storageType.equals(tokenEntity.getCloudStorage()))
+                .findFirst()
+                .map(TokenEntity::getAccessToken)
+                .orElse(null);
     }
 
     public List<TokenEntity> getTokens(User user) {

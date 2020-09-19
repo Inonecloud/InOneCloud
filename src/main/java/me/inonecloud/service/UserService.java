@@ -52,4 +52,10 @@ public class UserService {
                     userRepo.save(user);
                 });
     }
+
+    public User getCurrentUser(){
+        return SecurityUtils.getCurrentUserLogin()
+                .flatMap(userRepo::findByUsername)
+                .orElseThrow();
+    }
 }

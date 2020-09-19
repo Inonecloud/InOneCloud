@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("api/user")
 public class UserController {
@@ -38,12 +38,12 @@ public class UserController {
     }
 
     @PostMapping("/changePassword")
+    @ResponseStatus(HttpStatus.OK)
     public void changPassword(@Valid @RequestBody PasswordChangeDto passwordChangeDto){
         if(!passwordChecker(passwordChangeDto.getNewPassword())){
             throw new InvalidPasswordException();
         }
         userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
-
     }
 
     private boolean passwordChecker(String password) {
