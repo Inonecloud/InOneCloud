@@ -73,7 +73,9 @@ public class FilesListMapper {
         item.setCreated(Date.from(ZonedDateTime.parse(googleFile.getCreatedTime()).toInstant()));
         item.setModified(Date.from(ZonedDateTime.parse(googleFile.getModifiedTime()).toInstant()));
         item.setPath(googleFile.getOriginalFileName());
-        item.setSize(Long.parseLong(googleFile.getSize()));
+        if (googleFile.getSize() != null) {
+            item.setSize(Long.parseLong(googleFile.getSize()));
+        }
         item.setSource(CloudStorage.GOOGLE_DRIVE);
 
         return item;

@@ -6,16 +6,21 @@ import me.inonecloud.domain.TokenEntity;
 import me.inonecloud.domain.User;
 import me.inonecloud.repository.TokensRepository;
 import org.jeasy.random.EasyRandom;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -70,13 +75,27 @@ class TokenControlTest {
     }
 
     @Test
+    @DisplayName("Get tokens test")
     void getTokens() {
         when(tokensRepository.findTokenEntitiesByUser(any(User.class))).thenReturn(tokens);
         Set<TokenEntity> expected = Set.of(tokens.get(1), tokens.get(2), tokens.get(3));
 
         var result = tokenControl.getTokens(user);
 
-        Assert.assertEquals(3, result.size());
-        Assert.assertTrue(result.containsAll(expected));
+        Assertions.assertAll(
+                () -> assertEquals(3, result.size()),
+                () -> assertTrue(result.containsAll(expected))
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @EnumSource(CloudStorage.class)
+    @DisplayName("Extract tokens test")
+    void extractTokens(CloudStorage cloudStorage){
+        when(tokensRepository.findTokenEntitiesByUser(any(User.class))).thenReturn(tokens);
+
+        String extractedToken = tokenControl.extractToken(user, cloudStorage);
+
+        Assertions.assertFalse(extractedToken.isEmpty());
     }
 }

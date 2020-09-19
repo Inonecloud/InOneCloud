@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import static me.inonecloud.domain.CloudStorage.*;
@@ -80,7 +79,7 @@ public class CloudsInfoService {
             return null;
         }
 
-        ResponseEntity<YandexAboutDisk> storageSpaceResponse = yandexRepository.getStorageSpace(token);
+        ResponseEntity<YandexAboutDisk> storageSpaceResponse = yandexRepository.getSpaceUsage(token);
         if (storageSpaceResponse.getStatusCode().is2xxSuccessful()) {
             return cloudInfoMapper.yandexToCloudDto(storageSpaceResponse.getBody());
         }

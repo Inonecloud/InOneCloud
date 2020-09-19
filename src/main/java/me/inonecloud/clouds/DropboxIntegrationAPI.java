@@ -2,19 +2,21 @@ package me.inonecloud.clouds;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import me.inonecloud.clouds.dto.dropbox.DropboxAccessToken;
-import me.inonecloud.clouds.dto.dropbox.GetFilesDropboxRq;
-import me.inonecloud.clouds.dto.dropbox.GetFilesDropboxRs;
-import me.inonecloud.clouds.dto.dropbox.SpaceInfo;
+import me.inonecloud.clouds.dto.dropbox.*;
 import me.inonecloud.repository.DropboxRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 public class DropboxIntegrationAPI implements DropboxRepository {
@@ -63,7 +65,7 @@ public class DropboxIntegrationAPI implements DropboxRepository {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setBearerAuth(token);
         var request = new HttpEntity<>(new GetFilesDropboxRq("", true), httpHeaders);
-        return new RestTemplate().exchange(resourceURI, HttpMethod.POST, request, GetFilesDropboxRs.class); //FixMe change Object class to DTO
+        return restTemplate.exchange(resourceURI, HttpMethod.POST, request, GetFilesDropboxRs.class); //FixMe change Object class to DTO
     }
 
     public ResponseEntity<GetFilesDropboxRs> getFilesNext(String token, String cursor) throws JsonProcessingException {
@@ -73,8 +75,18 @@ public class DropboxIntegrationAPI implements DropboxRepository {
         httpHeaders.setBearerAuth(token);
         String body = "{\"cursor\" : \"" + cursor + "\"}";
         var request = new HttpEntity<>(new ObjectMapper().readTree(body), httpHeaders);
-        return new RestTemplate().exchange(resourceURI, HttpMethod.POST, request, GetFilesDropboxRs.class);
+        return restTemplate.exchange(resourceURI, HttpMethod.POST, request, GetFilesDropboxRs.class);
     }
 
+    public ResponseEntity<DownloadFileDropboxRs> downloadFile(String token, String path) {
+        URI resourceURI = URI.create(baseURI + "2/files/get_temporary_link");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBearerAuth(token);
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        var request = new HttpEntity<>(new DownloadFileDropboxRq(path), httpHeaders);
+
+        return restTemplate.exchange(resourceURI, HttpMethod.POST, request, DownloadFileDropboxRs.class);
+    }
 
 }

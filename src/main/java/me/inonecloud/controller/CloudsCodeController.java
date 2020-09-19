@@ -1,7 +1,6 @@
 package me.inonecloud.controller;
 
-import me.inonecloud.service.CloudsAuthService;
-import org.springframework.beans.factory.annotation.Qualifier;
+import me.inonecloud.service.CloudAuthStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,34 +9,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/auth")
 public class CloudsCodeController {
 
-    private final CloudsAuthService yandexAuthService;
-    private final CloudsAuthService dropboxAuthService;
-    private final CloudsAuthService googleAuthService;
+    private final CloudAuthStrategy cloudAuthStrategy;
 
-    public CloudsCodeController(@Qualifier("yandexAuthService") CloudsAuthService cloudsAuthService,
-                                @Qualifier("dropboxAuthService") CloudsAuthService dropboxAuthService,
-                                @Qualifier("googleAuthService") CloudsAuthService googleAuthService) {
-        this.yandexAuthService = cloudsAuthService;
-        this.dropboxAuthService = dropboxAuthService;
-        this.googleAuthService = googleAuthService;
+    public CloudsCodeController(CloudAuthStrategy cloudAuthStrategy) {
+        this.cloudAuthStrategy = cloudAuthStrategy;
     }
 
     @GetMapping("/yandex/{code}")
     @ResponseStatus(HttpStatus.OK)
     public void takeYandexCode(@PathVariable String code) {
-        yandexAuthService.getCode(code);
+        cloudAuthStrategy
+                .chooseCloudAuthService("YandexAuthService")
+                .getCode(code);
+
     }
 
     @GetMapping("/dropbox/{code}")
     @ResponseStatus(HttpStatus.OK)
     public void takeDropboxCode(@PathVariable String code) {
-        dropboxAuthService.getCode(code);
+        cloudAuthStrategy
+                .chooseCloudAuthService("DropboxAuthService")
+                .getCode(code);
     }
 
     @GetMapping("/google/{first_code}/{second_code}")
     @ResponseStatus(HttpStatus.OK)
     public void takeGoogleCode(@PathVariable("first_code") String fCode,
-                               @PathVariable("second_code") String sCode){
-        googleAuthService.getCode(fCode+"/"+sCode);
+                               @PathVariable("second_code") String sCode) {
+        cloudAuthStrategy
+                .chooseCloudAuthService("GoogleAuthService")
+                .getCode(fCode + "/" + sCode);
+
     }
 }
