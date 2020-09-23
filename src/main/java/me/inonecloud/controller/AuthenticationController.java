@@ -3,6 +3,7 @@ package me.inonecloud.controller;
 import me.inonecloud.controller.util.LoginUser;
 import me.inonecloud.security.DomainUserDetailsService;
 import me.inonecloud.security.jwt.TokenProvider;
+import me.inonecloud.service.dto.AuthDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +29,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/auth")
-    public ResponseEntity<?> createAuthToken(@Valid @RequestBody LoginUser loginUser) {
+    public ResponseEntity<AuthDto> createAuthToken(@Valid @RequestBody LoginUser loginUser) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword());
         authenticationManager.authenticate(authenticationToken);
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(loginUser.getUsername());
         final String jwt = tokenProvider.generateToken(userDetails);
+        final var authDto = new AuthDto(jwt, 1000 * 60 * 60 * 10);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Bearer " + jwt);
 
-        return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(authDto, httpHeaders, HttpStatus.OK);
     }
 }
