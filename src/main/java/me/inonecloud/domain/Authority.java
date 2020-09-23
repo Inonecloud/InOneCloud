@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Authorities")
-public class Authority {
+public class Authority extends BaseEntity {
 
     @Id
     @Column(name = "name")

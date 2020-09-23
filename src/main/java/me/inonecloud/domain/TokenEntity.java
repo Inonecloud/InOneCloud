@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "tokens")
-public class TokenEntity {
+public class TokenEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,9 +20,6 @@ public class TokenEntity {
 
     @Column(name = "expired_in")
     private Long expiresIn;
-
-    @Column(name = "created_at")
-    private Date createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "cloud_storage")
@@ -64,14 +61,6 @@ public class TokenEntity {
 
     public void setExpiresIn(Long expiresIn) {
         this.expiresIn = expiresIn;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
     }
 
     public CloudStorage getCloudStorage() {
